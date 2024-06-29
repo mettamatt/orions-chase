@@ -1,0 +1,189 @@
+:root {
+    /* Player variables */
+    --player-width: 201px;
+    --player-height: 308px;
+    --player-frames: 16;
+    --player-left: calc(5vw + var(--orion-width) + 5vw);
+
+    --player-jump-width: 236px;
+    --player-jump-height: 362px;
+    --player-jump-frames: 8;
+
+    /* Orion variables */
+    --orion-width: 187px;
+    --orion-height: 103px;
+    --orion-frames: 8;
+    --orion-left: 5vw;
+
+    /* Game variables */
+    --obstacle-width: 3.68vw;
+    --obstacle-height: 5.21vh;
+    --ground-level: 12.5vh;
+    --game-speed: 20s;
+    --fps: 24;
+
+    /* Jump variables */
+    --jump-height: 23vh;
+    --jump-duration: 800ms;
+
+    /* Animation durations */
+    --player-animation-duration: calc(var(--player-frames) / var(--fps) * 1s);
+    --player-jump-animation-duration: calc(var(--player-jump-frames) / var(--fps) * 1s);
+    --orion-animation-duration: calc(var(--orion-frames) / var(--fps) * 1s);
+}
+
+/* Reset and Global Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Game Container */
+#game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: url('../assets/background.svg') repeat-x;
+    background-size: 100% 100%;
+}
+
+#game-container.parallax {
+    animation: move-background var(--game-speed) linear infinite;
+}
+
+/* Ground */
+#ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--ground-level);
+    background-color: #808080;
+}
+
+/* Common styles for game elements */
+#player, #orion, #obstacle {
+    position: absolute;
+    bottom: var(--ground-level);
+}
+
+/* Player */
+#player {
+    width: var(--player-width);
+    height: var(--player-height);
+    background-image: url('../assets/player_sprite_sheet.png');
+    background-size: calc(var(--player-width) * var(--player-frames)) var(--player-height);
+    left: var(--player-left);
+    z-index: 10;
+    animation: player-run-animation var(--player-animation-duration) steps(var(--player-frames)) infinite;
+    animation-play-state: paused;
+}
+
+#player.jumping {
+    width: var(--player-jump-width);
+    height: var(--player-jump-height);
+    background-image: url('../assets/player-jump_sprite_sheet.png');
+    background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
+    animation: player-jump-animation var(--jump-duration) steps(var(--player-jump-frames)) forwards;
+}
+
+/* Orion */
+#orion {
+    width: var(--orion-width);
+    height: var(--orion-height);
+    left: var(--orion-left);
+    background-image: url('../assets/orion_sprite_sheet.png');
+    background-size: calc(var(--orion-width) * var(--orion-frames)) var(--orion-height);
+    z-index: 5;
+    animation: orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite;
+    animation-play-state: paused;
+}
+
+#orion.running {
+    animation-play-state: running;
+}
+
+#orion.jumping {
+    animation: 
+        orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite,
+        common-jump-animation var(--jump-duration) ease-out forwards;
+}
+
+/* Obstacle */
+#obstacle {
+    width: var(--obstacle-width);
+    height: var(--obstacle-height);
+    background-image: url('../assets/obstacle.png');
+    background-size: cover;
+    display: none;
+    left: var(--player-left);
+    bottom: calc(var(--ground-level) + (var(--player-height) - var(--obstacle-height)) / 4);
+}
+
+/* Score Container */
+#score-container {
+    position: absolute;
+    top: 2vh;
+    left: 2vw;
+    display: flex;
+    flex-direction: column;
+    font-size: 3vh;
+}
+
+#score, #high-score {
+    margin-bottom: 1vh;
+}
+
+/* Dialogs */
+.dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 3vh;
+    border: 0.2vh solid #000;
+    font-size: 3vh;
+    z-index: 1000;
+}
+
+#game-over {
+    display: none;
+}
+
+/* Animations */
+@keyframes move-background {
+    from { background-position: 0 0; }
+    to { background-position: -100vw 0; }
+}
+
+@keyframes player-run-animation {
+    from { background-position: 0 0; }
+    to { background-position: calc(-1 * var(--player-width) * var(--player-frames)) 0; }
+}
+
+@keyframes player-jump-animation {
+    from { background-position: 0 0; }
+    to { background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0; }
+}
+
+@keyframes orion-run-animation {
+    from { background-position: 0 0; }
+    to { background-position: calc(-1 * var(--orion-width) * var(--orion-frames)) 0; }
+}
+
+@keyframes common-jump-animation {
+    0%, 100% { bottom: var(--ground-level); }
+    50% { bottom: calc(var(--ground-level) + var(--jump-height)); }
+}
+
+/* Paused State */
+.paused {
+    opacity: 0.7;
+    filter: grayscale(50%);
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
