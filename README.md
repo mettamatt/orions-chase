@@ -4,7 +4,6 @@
 Orion's Chase is a dynamic, side-scrolling game where players must navigate their character and Orion to avoid obstacles and achieve high scores. This repository contains the complete source code for the game, including HTML, CSS, and JavaScript files.
 
 ## Features
-- **Responsive Design:** The game adjusts to various screen sizes and orientations.
 - **Smooth Animations:** Keyframe animations for running and jumping.
 - **Interactive Controls:** Support for keyboard and touch inputs.
 - **Dynamic Gameplay:** Increasing difficulty with acceleration and score tracking.
