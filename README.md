@@ -22,6 +22,9 @@ Orion's Chase is a dynamic, side-scrolling game where players must navigate thei
 3. Open `index.html` in your web browser to play the game.
 
 ## How to Play
+
+https://mettamatt.github.io/orions-chase/
+
 1. **Start the Game:** Press the Space bar or tap the screen to start the game. The player character automatically runs forward
 2. **Jump:** Press the Space bar or tap the screen to make the player jump and avoid obstacles.
 3. **Pause/Resume:** Press the 'P' key to pause the game. Press it again to resume.
