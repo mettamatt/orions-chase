@@ -7,20 +7,20 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="game-container">
-        <div id="ground"></div>
-        <div id="score-container">
-            <div id="score">Score: 0</div>
-            <div id="high-score">High Score: 0</div>
+    <div id="game-container" class="game-container">
+        <div class="ground"></div>
+        <div id="score-container" class="score-container">
+            <div id="score" class="score">Score: 0</div>
+            <div id="high-score" class="high-score">High Score: 0</div>
         </div>
-        <div id="player"></div>
-        <div id="orion"></div>
-        <div id="obstacle"></div>
+        <div id="player" class="player game-element"></div>
+        <div id="orion" class="orion game-element"></div>
+        <div id="obstacle" class="obstacle game-element"></div>
     </div>
     <div id="instruction-dialog" class="dialog">
         <p>Press Space Bar or Tap to Start</p>
     </div>
-    <div id="game-over" class="dialog">
+    <div id="game-over" class="dialog game-over">
         <p>Game Over! Final Score: <span id="final-score"></span></p>
     </div>
     <script type="module" src="js/game.js"></script>
