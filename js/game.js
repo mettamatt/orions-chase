@@ -57,11 +57,11 @@ export const elements = {
     obstacle: null,
     scoreDisplay: null,
     highScoreDisplay: null,
-    gameOverScreen: null,
     finalScoreDisplay: null,
     instructionDialog: null,
     gameContainer: null,
-    instructionMessage: null
+    gameOverMessage: null,
+    instructionMessage: null,
 };
 
 /**
@@ -75,13 +75,13 @@ export function initDOMElements() {
         'obstacle': 'obstacle',
         'score': 'scoreDisplay',
         'high-score': 'highScoreDisplay',
-        'game-over': 'gameOverScreen',
         'final-score': 'finalScoreDisplay',
         'instruction-dialog': 'instructionDialog',
         'game-container': 'gameContainer',
-        'instruction-message': 'instructionMessage'
+        'game-over-message': 'gameOverMessage',
+        'instruction-message': 'instructionMessage',
     };
-    
+
     for (const [id, key] of Object.entries(elementIdToKey)) {
         elements[key] = document.getElementById(id);
         if (!elements[key]) {
@@ -128,7 +128,7 @@ function updateGameUI(isPlaying) {
     elements.obstacle.style.left = `${state.obstacleLeft}vw`;
     elements.obstacle.style.display = isPlaying ? 'block' : 'none';
 
-    elements.gameOverScreen.style.display = 'none';
+    elements.gameOverMessage.style.display = 'none';
     elements.instructionDialog.style.display = isPlaying ? 'none' : 'block';
     elements.player.style.animationPlayState = isPlaying ? 'running' : 'paused';
     elements.orion.style.animationPlayState = isPlaying ? 'running' : 'paused';

@@ -80,7 +80,7 @@
     background-size: cover;
     display: none;
     left: var(--player-left);
-    bottom: calc(var(--ground-level) + (var(--player-height) - var(--obstacle-height)) / 4);
+    bottom: calc(var(--ground-level) + (var(--player-height) / 2));
 }
 
 /* UI elements */
@@ -110,6 +110,6 @@
     z-index: 1000;
 }
 
-.game-over {
+.hidden {
     display: none;
 }

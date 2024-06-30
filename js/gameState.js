@@ -9,6 +9,7 @@ import { log } from './utils.js';
  * @param {string} action - The action to handle.
  */
 export function handleStateTransition(state, action) {
+    log(`Handling ${action} in state: ${state.gameState}`);
     switch (state.gameState) {
         case GameState.INITIAL:
         case GameState.CRASHED:
