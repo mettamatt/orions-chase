@@ -1,19 +1,12 @@
+// game.js
 import { CONFIG, GameState } from './config.js';
-import { preloadAssets, setupGameVisuals, log, loadHighScore, saveHighScore } from './utils.js';
-import { setupEventListeners } from './events.js';
+import { log, saveHighScore } from './utils.js';
 import { GameLoop } from './gameLoop.js';
+import { UI } from './ui.js';
 
-const assetList = {
-    images: [
-        'assets/player_sprite_sheet.png',
-        'assets/player-jump_sprite_sheet.png',
-        'assets/orion_sprite_sheet.png',
-        'assets/obstacle.png',
-        'assets/background.svg'
-    ],
-    audio: []
-};
-
+/**
+ * Represents the game state.
+ */
 class State {
     constructor() {
         this.highScore = 0;
@@ -34,6 +27,9 @@ class State {
         this.orionJumpStartTime = 0;
     }
 
+    /**
+     * Resets the game state to its initial values.
+     */
     reset() {
         this.gameState = GameState.INITIAL;
         this.playerBottom = CONFIG.GAME.GROUND_HEIGHT;
@@ -67,44 +63,11 @@ export const elements = {
     gameContainer: null
 };
 
-const UI = {
-    updateScore(currentTime) {
-        const deltaTime = (currentTime - state.lastFrameTime) / 1000;
-        state.distanceRan += state.currentSpeed * deltaTime;
-        state.score = Math.floor(state.distanceRan * CONFIG.SCORING.POINTS_PER_PERCENT);
-        elements.scoreDisplay.textContent = `Score: ${state.score}`;
-    },
-
-    updateEndGame(finalScore) {
-        elements.finalScoreDisplay.textContent = `${finalScore}`;
-        elements.highScoreDisplay.textContent = `High Score: ${state.highScore}`;
-        elements.gameOverScreen.style.display = 'block';
-        elements.instructionDialog.style.display = 'none';
-        elements.gameContainer.classList.remove('parallax');
-    },
-
-    updateInitial() {
-        elements.highScoreDisplay.textContent = `High Score: ${state.highScore}`;
-        elements.instructionDialog.style.display = 'block';
-        elements.gameContainer.classList.remove('parallax');
-    }
-};
-
-export async function initializeGame() {
-    try {
-        await preloadAssets(assetList);
-        state.highScore = loadHighScore();
-        initDOMElements();
-        setupEventListeners();
-        setupGameVisuals(assetList);
-        UI.updateInitial();
-        //addDebugVisualization();
-    } catch (error) {
-        log('Failed to initialize game: ' + error.message, 'error');
-    }
-}
-
-function initDOMElements() {
+/**
+ * Initializes DOM elements by assigning them to the elements object.
+ * @throws {Error} If a required DOM element is not found.
+ */
+export function initDOMElements() {
     const elementIdToKey = {
         'player': 'player',
         'orion': 'orion',
@@ -127,6 +90,9 @@ function initDOMElements() {
     elements.orion.style.animationPlayState = 'paused';
 }
 
+/**
+ * Starts the game.
+ */
 export function startGame() {
     state.lastFrameTime = performance.now();
     state.gameState = GameState.PLAYING;
@@ -139,6 +105,9 @@ export function startGame() {
     log('Game started');
 }
 
+/**
+ * Resets the game.
+ */
 export function resetGame() {
     GameLoop.cancel();
     state.reset();
@@ -147,6 +116,10 @@ export function resetGame() {
     log('Game reset');
 }
 
+/**
+ * Updates the game UI based on the playing state.
+ * @param {boolean} isPlaying - Indicates whether the game is currently being played.
+ */
 function updateGameUI(isPlaying) {
     elements.player.style.bottom = `${state.playerBottom}vh`;
     elements.orion.style.bottom = `${state.orionBottom}vh`;
@@ -162,6 +135,9 @@ function updateGameUI(isPlaying) {
     elements.gameContainer.classList.toggle('parallax', isPlaying);
 }
 
+/**
+ * Ends the game.
+ */
 export function endGame() {
     GameLoop.cancel();
     state.gameState = GameState.CRASHED;
@@ -179,6 +155,9 @@ export function endGame() {
     log(`Game ended. Final score: ${finalScore}`);
 }
 
+/**
+ * Handles the player's jump action.
+ */
 export function handleJump() {
     if (!state.isJumping) {
         state.isJumping = true;
@@ -188,12 +167,20 @@ export function handleJump() {
     }
 }
 
+/**
+ * Updates Orion's state based on jumping and playing status.
+ * @param {boolean} isJumping - Indicates whether Orion is jumping.
+ * @param {boolean} isPlaying - Indicates whether the game is being played.
+ */
 export function updateOrionState(isJumping, isPlaying) {
     elements.orion.classList.toggle('jumping', isJumping);
     elements.orion.classList.toggle('running', isPlaying);
     elements.orion.classList.toggle('paused', !isPlaying);
 }
 
+/**
+ * Pauses the game.
+ */
 export function pauseGame() {
     if (state.gameState === GameState.PLAYING) {
         GameLoop.cancel();
@@ -205,6 +192,9 @@ export function pauseGame() {
     }
 }
 
+/**
+ * Resumes the game.
+ */
 export function resumeGame() {
     if (state.gameState === GameState.PAUSED) {
         state.lastFrameTime = performance.now();
@@ -216,9 +206,3 @@ export function resumeGame() {
         log('Game resumed');
     }
 }
-
-window.addEventListener('error', function(event) {
-    log('Uncaught error: ' + event.message, 'error');
-});
-
-document.addEventListener('DOMContentLoaded', initializeGame);

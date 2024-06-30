@@ -1,11 +1,20 @@
-const root = document.documentElement;
-
+// config.js
+/**
+ * Retrieves a CSS variable value.
+ * @param {string} variableName - The name of the CSS variable.
+ * @returns {string} The value of the CSS variable.
+ */
 function getCSSVariable(variableName) {
-    const value = getComputedStyle(root).getPropertyValue(variableName).trim();
+    const value = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
     console.log(`CSS Variable - ${variableName}: ${value}`);
     return value;
 }
 
+/**
+ * Converts a CSS time value to milliseconds.
+ * @param {string} cssTime - The CSS time value (e.g., '200ms', '0.5s').
+ * @returns {number} The time in milliseconds.
+ */
 function cssTimeToMs(cssTime) {
     if (cssTime.endsWith('ms')) {
         return parseFloat(cssTime);
@@ -15,41 +24,32 @@ function cssTimeToMs(cssTime) {
     return parseFloat(cssTime);
 }
 
-const playerWidth = parseInt(getCSSVariable('--player-width'));
-const playerHeight = parseInt(getCSSVariable('--player-height'));
-const orionWidth = parseInt(getCSSVariable('--orion-width'));
-const orionHeight = parseInt(getCSSVariable('--orion-height'));
-const obstacleWidth = parseFloat(getCSSVariable('--obstacle-width')) / 100 * window.innerWidth;
-const obstacleHeight = parseFloat(getCSSVariable('--obstacle-height')) / window.innerHeight * 100;
-const groundLevel = parseFloat(getCSSVariable('--ground-level'));
-const jumpHeightVh = parseFloat(getCSSVariable('--jump-height'));
-const jumpDurationMs = cssTimeToMs(getCSSVariable('--jump-duration'));
-
+// Define game configurations.
 export const CONFIG = {
     PLAYER: {
-        WIDTH: playerWidth,
-        HEIGHT: playerHeight,
+        WIDTH: parseInt(getCSSVariable('--player-width')),
+        HEIGHT: parseInt(getCSSVariable('--player-height')),
         INITIAL_LEFT: parseFloat(getCSSVariable('--player-left'))
     },
     ORION: {
-        WIDTH: orionWidth,
-        HEIGHT: orionHeight,
+        WIDTH: parseInt(getCSSVariable('--orion-width')),
+        HEIGHT: parseInt(getCSSVariable('--orion-height')),
         INITIAL_LEFT: parseFloat(getCSSVariable('--orion-left'))
     },
     OBSTACLE: {
-        WIDTH: obstacleWidth,
-        HEIGHT: obstacleHeight,
+        WIDTH: parseFloat(getCSSVariable('--obstacle-width')) / 100 * window.innerWidth,
+        HEIGHT: parseFloat(getCSSVariable('--obstacle-height')) / window.innerHeight * 100,
     },
     GAME: {
-        INITIAL_SPEED: 31.25, // % of viewport width per second
-        MAX_SPEED: 300, // % of viewport width per second
-        ACCELERATION: 1.15, // % of viewport width per second^2
-        GROUND_HEIGHT: groundLevel,
-        CONTAINER_WIDTH: 100, // % of viewport width
+        INITIAL_SPEED: 31.25,
+        MAX_SPEED: 300,
+        ACCELERATION: 1.15,
+        GROUND_HEIGHT: parseFloat(getCSSVariable('--ground-level')),
+        CONTAINER_WIDTH: 100,
     },
     JUMP: {
-        HEIGHT: jumpHeightVh,
-        DURATION: jumpDurationMs,
+        HEIGHT: parseFloat(getCSSVariable('--jump-height')),
+        DURATION: cssTimeToMs(getCSSVariable('--jump-duration')),
     },
     SCORING: {
         POINTS_PER_PERCENT: 0.5,
@@ -58,6 +58,7 @@ export const CONFIG = {
     },
 };
 
+// Define game states.
 export const GameState = {
     INITIAL: 'initial',
     PLAYING: 'playing',

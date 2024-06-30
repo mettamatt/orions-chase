@@ -1,0 +1,49 @@
+/* Base Styles and Variables */
+
+/* Root variables - crucial for JavaScript interactions */
+:root {
+    /* Player variables */
+    --player-width: 201px;
+    --player-height: 308px;
+    --player-frames: 16;
+    --player-left: calc(5vw + var(--orion-width) + 5vw);
+    --player-jump-width: 236px;
+    --player-jump-height: 362px;
+    --player-jump-frames: 8;
+
+    /* Orion variables */
+    --orion-width: 187px;
+    --orion-height: 103px;
+    --orion-frames: 8;
+    --orion-left: 5vw;
+
+    /* Game variables */
+    --obstacle-width: 3.68vw;
+    --obstacle-height: 5.21vh;
+    --ground-level: 12.5vh;
+    --game-speed: 20s;
+    --fps: 24;
+
+    /* Jump variables */
+    --jump-height: 23vh;
+    --jump-duration: 800ms;
+
+    /* Animation durations */
+    --player-animation-duration: calc(var(--player-frames) / var(--fps) * 1s);
+    --player-jump-animation-duration: calc(var(--player-jump-frames) / var(--fps) * 1s);
+    --orion-animation-duration: calc(var(--orion-frames) / var(--fps) * 1s);
+
+    /* UI variables */
+    --dialog-background: rgba(255, 255, 255, 0.9);
+    --dialog-border-color: #000;
+    --dialog-font-size: 3vh;
+    --score-font-size: 3vh;
+}
+
+/* Global styles to reset default browser styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}

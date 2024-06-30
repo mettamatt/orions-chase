@@ -1,3 +1,4 @@
+// gameLoop.js
 import { CONFIG, GameState } from './config.js';
 import { state, elements, endGame } from './game.js';
 import { checkCollision, calculateJumpPosition } from './utils.js';
@@ -6,21 +7,34 @@ const FIXED_TIME_STEP = 1000 / 60;
 const MAX_FRAME_SKIP = 5;
 const EMPIRICAL_ADJUSTMENT_FACTOR = 0.3; // Adjust this factor as needed
 
+/**
+ * GameLoop class to manage the game loop.
+ */
 export class GameLoop {
     static accumulatedTime = 0;
     static lastTime = performance.now();
     static animationFrameId = null;
 
+    /**
+     * Starts the game loop.
+     */
     static start() {
         cancelAnimationFrame(this.animationFrameId);
         elements.obstacle.style.display = 'block';
         this.animationFrameId = requestAnimationFrame(this.update.bind(this));
     }
 
+    /**
+     * Cancels the game loop.
+     */
     static cancel() {
         cancelAnimationFrame(this.animationFrameId);
     }
 
+    /**
+     * Updates the game state and renders the next frame.
+     * @param {number} currentTime - The current time.
+     */
     static update(currentTime) {
         if (state.gameState !== GameState.PLAYING) {
             this.animationFrameId = requestAnimationFrame(this.update.bind(this));
@@ -52,6 +66,11 @@ export class GameLoop {
         this.animationFrameId = requestAnimationFrame(this.update.bind(this));
     }
 
+    /**
+     * Updates the game objects.
+     * @param {number} currentTime - The current time.
+     * @param {number} deltaTime - The time difference between frames.
+     */
     static updateGameObjects(currentTime, deltaTime) {
         this.updatePlayerPosition(currentTime);
         this.updateOrionPosition(currentTime);
@@ -61,6 +80,10 @@ export class GameLoop {
         state.currentSpeed = Math.min(state.currentSpeed + CONFIG.GAME.ACCELERATION * deltaTime, CONFIG.GAME.MAX_SPEED);
     }
 
+    /**
+     * Updates the player position.
+     * @param {number} currentTime - The current time.
+     */
     static updatePlayerPosition(currentTime) {
         if (state.isJumping) {
             const { bottom, isJumpFinished } = calculateJumpPosition(state.jumpStartTime, currentTime);
@@ -73,29 +96,22 @@ export class GameLoop {
         }
     }
 
+    /**
+     * Updates Orion's position.
+     * @param {number} currentTime - The current time.
+     */
     static updateOrionPosition(currentTime) {
-        // Calculate the jump duration in seconds
         const jumpDurationSeconds = CONFIG.JUMP.DURATION / 1000;
-
-        // Calculate the base distance Orion should start the jump
         const jumpTriggerDistance = state.currentSpeed * jumpDurationSeconds;
-
-        // Empirical adjustment based on speed
         const empiricalAdjustment = state.currentSpeed * EMPIRICAL_ADJUSTMENT_FACTOR;
-
-        // Apply the empirical adjustment to the jump trigger distance
         const adjustedJumpTriggerDistance = jumpTriggerDistance - empiricalAdjustment;
-
-        // Calculate the current distance to the obstacle
         const distanceToObstacle = state.obstacleLeft - state.orionLeft;
 
-        // Trigger the jump if Orion is not already jumping and the obstacle is within the adjusted jump trigger distance
         if (!state.orionIsJumping && distanceToObstacle <= adjustedJumpTriggerDistance && distanceToObstacle > 0) {
             state.orionIsJumping = true;
             state.orionJumpStartTime = currentTime;
         }
 
-        // Handle the jump movement
         if (state.orionIsJumping) {
             const { bottom, isJumpFinished } = calculateJumpPosition(state.orionJumpStartTime, currentTime);
             state.orionBottom = bottom;
@@ -106,6 +122,10 @@ export class GameLoop {
         }
     }
 
+    /**
+     * Updates the obstacle position.
+     * @param {number} deltaTime - The time difference between frames.
+     */
     static updateObstaclePosition(deltaTime) {
         state.obstacleLeft -= state.currentSpeed * deltaTime;
         if (state.obstacleLeft <= -CONFIG.OBSTACLE.WIDTH) {
@@ -114,11 +134,19 @@ export class GameLoop {
         elements.obstacle.style.left = `${state.obstacleLeft}vw`;
     }
 
+    /**
+     * Updates the background position.
+     * @param {number} deltaTime - The time difference between frames.
+     */
     static updateBackgroundPosition(deltaTime) {
         state.backgroundPosX -= state.currentSpeed * deltaTime * 0.5;
         elements.gameContainer.style.backgroundPositionX = `${state.backgroundPosX}vw`;
     }
 
+    /**
+     * Updates the game score.
+     * @param {number} currentTime - The current time.
+     */
     static updateScore(currentTime) {
         const deltaTime = (currentTime - state.lastFrameTime) / 1000;
         state.distanceRan += state.currentSpeed * deltaTime;
@@ -127,6 +155,9 @@ export class GameLoop {
         state.lastFrameTime = currentTime;
     }
 
+    /**
+     * Updates the game visuals.
+     */
     static updateVisuals() {
         elements.player.style.bottom = `${state.playerBottom}vh`;
         elements.orion.style.bottom = `${state.orionBottom}vh`;
