@@ -1,6 +1,6 @@
 import { CONFIG, GameState } from './config.js';
-import { preloadAssets, setupGameVisuals, log, loadHighScore, saveHighScore, checkCollision, addDebugVisualization } from './utils.js';
-import { setupEventListeners, removeEventListeners } from './events.js';
+import { preloadAssets, setupGameVisuals, log, loadHighScore, saveHighScore } from './utils.js';
+import { setupEventListeners } from './events.js';
 import { GameLoop } from './gameLoop.js';
 
 const assetList = {

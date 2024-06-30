@@ -37,7 +37,7 @@ function togglePause() {
     state.gameState === GameState.PLAYING ? pauseGame() : resumeGame();
 }
 
-export function handleTouchStart(e) {
+export function handleTouchStart() {
     log(`Handling touch start in state: ${state.gameState}`, 'info');
     switch (state.gameState) {
         case GameState.INITIAL:
