@@ -60,7 +60,8 @@ export const elements = {
     gameOverScreen: null,
     finalScoreDisplay: null,
     instructionDialog: null,
-    gameContainer: null
+    gameContainer: null,
+    instructionMessage: null
 };
 
 /**
@@ -77,7 +78,8 @@ export function initDOMElements() {
         'game-over': 'gameOverScreen',
         'final-score': 'finalScoreDisplay',
         'instruction-dialog': 'instructionDialog',
-        'game-container': 'gameContainer'
+        'game-container': 'gameContainer',
+        'instruction-message': 'instructionMessage'
     };
     
     for (const [id, key] of Object.entries(elementIdToKey)) {
@@ -174,8 +176,7 @@ export function handleJump() {
  */
 export function updateOrionState(isJumping, isPlaying) {
     elements.orion.classList.toggle('jumping', isJumping);
-    elements.orion.classList.toggle('running', isPlaying);
-    elements.orion.classList.toggle('paused', !isPlaying);
+    elements.orion.style.animationPlayState = isPlaying ? 'running' : 'paused';
 }
 
 /**

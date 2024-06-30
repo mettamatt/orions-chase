@@ -22,7 +22,7 @@ export const UI = {
         elements.finalScoreDisplay.textContent = `${finalScore}`;
         elements.highScoreDisplay.textContent = `High Score: ${state.highScore}`;
         elements.gameOverScreen.style.display = 'block';
-        elements.instructionDialog.style.display = 'none';
+        elements.instructionDialog.style.display = 'block'; // Show instruction dialog
         elements.gameContainer.classList.remove('parallax');
     },
 
@@ -32,6 +32,7 @@ export const UI = {
     updateInitial() {
         elements.highScoreDisplay.textContent = `High Score: ${state.highScore}`;
         elements.instructionDialog.style.display = 'block';
+        elements.gameOverScreen.style.display = 'none';
         elements.gameContainer.classList.remove('parallax');
     }
 };

@@ -8,8 +8,10 @@ let spaceKeyDisabled = false;
 
 // Define key actions and their corresponding handlers.
 const keyActions = {
-    'Space': () => handleStateTransition(state, state.gameState === GameState.INITIAL ? 'START' : 'JUMP'),
-    'KeyP': () => handleStateTransition(state, state.gameState === GameState.PLAYING ? 'PAUSE' : 'RESUME')
+    'Space': () => handleStateTransition(state, 
+      state.gameState === GameState.INITIAL || state.gameState === GameState.CRASHED ? 'START' : 'JUMP'),
+    'KeyP': () => handleStateTransition(state, 
+      state.gameState === GameState.PLAYING ? 'PAUSE' : 'RESUME')
 };
 
 /**
