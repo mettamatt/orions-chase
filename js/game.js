@@ -99,7 +99,9 @@ export function initDOMElements() {
   elements.player.style.bottom = `${groundLevel}px`;
   elements.orion.style.left = `${CONFIG.ORION.INITIAL_LEFT}px`;
   elements.orion.style.bottom = `${groundLevel}px`;
-  elements.obstacle.style.bottom = `${groundLevel + playerHeight / 2}px`;
+  elements.obstacle.style.width = `${CONFIG.OBSTACLE.WIDTH}px`;
+    elements.obstacle.style.height = `${CONFIG.OBSTACLE.HEIGHT}px`;
+    elements.obstacle.style.bottom = `${groundLevel + playerHeight / 2}px`;
 }
 
 /**

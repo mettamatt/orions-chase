@@ -57,8 +57,8 @@ export const CONFIG = {
     INITIAL_LEFT: parseFloat(CSS_VARS.orionLeft),
   },
   OBSTACLE: {
-    WIDTH: (parseFloat(CSS_VARS.obstacleWidth) / 100) * window.innerWidth,
-    HEIGHT: (parseFloat(CSS_VARS.obstacleHeight) / 100) * window.innerHeight,
+    WIDTH: parseFloat(CSS_VARS.obstacleWidth),
+    HEIGHT: parseFloat(CSS_VARS.obstacleHeight),
   },
   GAME: {
     INITIAL_SPEED: 31.25, // Game speed logic should be handled in JS.
