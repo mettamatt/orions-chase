@@ -88,11 +88,18 @@ export function initDOMElements() {
       throw new Error(`Required DOM element not found: ${id}`);
     }
   }
+
+  // Use the precomputed ground height from CONFIG
+  const groundLevel = CONFIG.GAME.GROUND_HEIGHT;
+  const playerHeight = CONFIG.PLAYER.HEIGHT;
+
   elements.player.style.animationPlayState = "paused";
   elements.orion.style.animationPlayState = "paused";
-
   elements.player.style.left = `${CONFIG.PLAYER.INITIAL_LEFT}px`;
+  elements.player.style.bottom = `${groundLevel}px`;
   elements.orion.style.left = `${CONFIG.ORION.INITIAL_LEFT}px`;
+  elements.orion.style.bottom = `${groundLevel}px`;
+  elements.obstacle.style.bottom = `${groundLevel + playerHeight / 2}px`;
 }
 
 /**

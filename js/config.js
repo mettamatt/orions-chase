@@ -64,7 +64,8 @@ export const CONFIG = {
     INITIAL_SPEED: 31.25, // Game speed logic should be handled in JS.
     MAX_SPEED: 300,
     ACCELERATION: 1.15,
-    GROUND_HEIGHT: parseFloat(CSS_VARS.groundLevel),
+    GROUND_HEIGHT:
+      (parseFloat(CSS_VARS.groundLevel) * window.innerHeight) / 100,
     CONTAINER_WIDTH: 100,
   },
   JUMP: {

@@ -91,18 +91,21 @@ export class GameLoop {
    * @param {number} currentTime - The current time.
    */
   static updatePlayerPosition(currentTime) {
+    const groundLevel = CONFIG.GAME.GROUND_HEIGHT;
     if (state.isJumping) {
       const { bottom, isJumpFinished } = calculateJumpPosition(
         state.jumpStartTime,
         currentTime,
       );
-      state.playerBottom = bottom;
+      state.playerBottom = groundLevel + bottom;
       if (isJumpFinished) {
         state.isJumping = false;
         elements.player.classList.remove("jumping");
       }
-      elements.player.style.bottom = `${state.playerBottom}px`;
+    } else {
+      state.playerBottom = groundLevel;
     }
+    elements.player.style.bottom = `${state.playerBottom}px`;
   }
 
   /**
@@ -110,6 +113,7 @@ export class GameLoop {
    * @param {number} currentTime - The current time.
    */
   static updateOrionPosition(currentTime) {
+    const groundLevel = CONFIG.GAME.GROUND_HEIGHT;
     const jumpDurationSeconds = CONFIG.JUMP.DURATION / 1000;
     const jumpTriggerDistance = state.currentSpeed * jumpDurationSeconds;
     const empiricalAdjustment =
@@ -132,12 +136,15 @@ export class GameLoop {
         state.orionJumpStartTime,
         currentTime,
       );
-      state.orionBottom = bottom;
+      state.orionBottom = groundLevel + bottom;
       if (isJumpFinished) {
         state.orionIsJumping = false;
       }
-      elements.orion.style.bottom = `${state.orionBottom}px`;
+    } else {
+      state.orionBottom = groundLevel;
     }
+
+    elements.orion.style.bottom = `${state.orionBottom}px`;
   }
 
   /**
