@@ -1,7 +1,13 @@
 // gameState.js
-import { GameState } from './config.js';
-import { resetGame, startGame, handleJump, pauseGame, resumeGame } from './game.js';
-import { log } from './utils.js';
+import { GameState } from "./config.js";
+import {
+  resetGame,
+  startGame,
+  handleJump,
+  pauseGame,
+  resumeGame,
+} from "./game.js";
+import { log } from "./utils.js";
 
 /**
  * Handles state transitions for the game.
@@ -9,30 +15,30 @@ import { log } from './utils.js';
  * @param {string} action - The action to handle.
  */
 export function handleStateTransition(state, action) {
-    log(`Handling ${action} in state: ${state.gameState}`);
-    switch (state.gameState) {
-        case GameState.INITIAL:
-        case GameState.CRASHED:
-            if (action === 'START') {
-                resetGame();
-                startGame();
-            }
-            break;
-        case GameState.PLAYING:
-            if (action === 'JUMP') {
-                handleJump();
-            } else if (action === 'PAUSE') {
-                pauseGame();
-            } else if (action === 'RESUME') {
-                resumeGame();
-            }
-            break;
-        case GameState.PAUSED:
-            if (action === 'RESUME') {
-                resumeGame();
-            }
-            break;
-    }
+  log(`Handling ${action} in state: ${state.gameState}`);
+  switch (state.gameState) {
+    case GameState.INITIAL:
+    case GameState.CRASHED:
+      if (action === "START") {
+        resetGame();
+        startGame();
+      }
+      break;
+    case GameState.PLAYING:
+      if (action === "JUMP") {
+        handleJump();
+      } else if (action === "PAUSE") {
+        pauseGame();
+      } else if (action === "RESUME") {
+        resumeGame();
+      }
+      break;
+    case GameState.PAUSED:
+      if (action === "RESUME") {
+        resumeGame();
+      }
+      break;
+  }
 }
 
 /**
@@ -41,5 +47,5 @@ export function handleStateTransition(state, action) {
  * @param {string} action - The action being handled.
  */
 export function logStateTransition(state, action) {
-    log(`Handling ${action} in state: ${state.gameState}`, 'info');
+  log(`Handling ${action} in state: ${state.gameState}`, "info");
 }

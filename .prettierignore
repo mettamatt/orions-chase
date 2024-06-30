@@ -1,0 +1,16 @@
+# Ignore all image files
+**/*.png
+**/*.svg
+
+# Ignore Python scripts
+**/*.py
+
+# Ignore all files in the assets directory
+assets/**/*
+
+# Ignore specific files in the root directory
+LICENSE
+README.md
+
+# Ignore eslint configuration file
+eslint.config.mjs

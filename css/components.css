@@ -2,114 +2,122 @@
 
 /* Game container */
 .game-container {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-    background: url('../assets/background.svg') repeat-x;
-    background-size: 100% 100%;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: url("../assets/background.svg") repeat-x;
+  background-size: 100% 100%;
 }
 
 .game-container.parallax {
-    animation: move-background var(--game-speed) linear infinite;
-    will-change: background-position;
+  animation: move-background var(--game-speed) linear infinite;
+  will-change: background-position;
 }
 
 /* Ground */
 .ground {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: var(--ground-level);
-    background-color: #808080;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--ground-level);
+  background-color: #808080;
 }
 
 /* Player styles */
 .player {
-    composes: game-element;
-    width: var(--player-width);
-    height: var(--player-height);
-    background-image: url('../assets/player_sprite_sheet.png');
-    background-size: calc(var(--player-width) * var(--player-frames)) var(--player-height);
-    left: var(--player-left);
-    z-index: 10;
-    animation: player-run-animation var(--player-animation-duration) steps(var(--player-frames)) infinite;
-    animation-play-state: paused;
-    will-change: transform, background-position;
+  composes: game-element;
+  width: var(--player-width);
+  height: var(--player-height);
+  background-image: url("../assets/player_sprite_sheet.png");
+  background-size: calc(var(--player-width) * var(--player-frames))
+    var(--player-height);
+  left: var(--player-left);
+  z-index: 10;
+  animation: player-run-animation var(--player-animation-duration)
+    steps(var(--player-frames)) infinite;
+  animation-play-state: paused;
+  will-change: transform, background-position;
 }
 
 .player.jumping {
-    width: var(--player-jump-width);
-    height: var(--player-jump-height);
-    background-image: url('../assets/player-jump_sprite_sheet.png');
-    background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
-    animation: player-jump-animation var(--jump-duration) steps(var(--player-jump-frames)) forwards;
+  width: var(--player-jump-width);
+  height: var(--player-jump-height);
+  background-image: url("../assets/player-jump_sprite_sheet.png");
+  background-size: calc(var(--player-jump-width) * var(--player-jump-frames))
+    var(--player-jump-height);
+  animation: player-jump-animation var(--jump-duration)
+    steps(var(--player-jump-frames)) forwards;
 }
 
 /* Orion styles */
 .orion {
-    composes: game-element;
-    width: var(--orion-width);
-    height: var(--orion-height);
-    left: var(--orion-left);
-    background-image: url('../assets/orion_sprite_sheet.png');
-    background-size: calc(var(--orion-width) * var(--orion-frames)) var(--orion-height);
-    z-index: 5;
-    animation: orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite;
-    animation-play-state: paused;
-    will-change: transform, background-position;
+  composes: game-element;
+  width: var(--orion-width);
+  height: var(--orion-height);
+  left: var(--orion-left);
+  background-image: url("../assets/orion_sprite_sheet.png");
+  background-size: calc(var(--orion-width) * var(--orion-frames))
+    var(--orion-height);
+  z-index: 5;
+  animation: orion-run-animation var(--orion-animation-duration)
+    steps(var(--orion-frames)) infinite;
+  animation-play-state: paused;
+  will-change: transform, background-position;
 }
 
 .orion.running {
-    animation-play-state: running;
+  animation-play-state: running;
 }
 
 .orion.jumping {
-    animation: 
-        orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite,
-        common-jump-animation var(--jump-duration) ease-out forwards;
+  animation:
+    orion-run-animation var(--orion-animation-duration)
+      steps(var(--orion-frames)) infinite,
+    common-jump-animation var(--jump-duration) ease-out forwards;
 }
 
 /* Obstacle styles */
 .obstacle {
-    composes: game-element;
-    width: var(--obstacle-width);
-    height: var(--obstacle-height);
-    background-image: url('../assets/obstacle.png');
-    background-size: cover;
-    display: none;
-    left: var(--player-left);
-    bottom: calc(var(--ground-level) + (var(--player-height) / 2));
+  composes: game-element;
+  width: var(--obstacle-width);
+  height: var(--obstacle-height);
+  background-image: url("../assets/obstacle.png");
+  background-size: cover;
+  display: none;
+  left: var(--player-left);
+  bottom: calc(var(--ground-level) + (var(--player-height) / 2));
 }
 
 /* UI elements */
 .score-container {
-    position: absolute;
-    top: 2vh;
-    left: 2vw;
-    display: flex;
-    flex-direction: column;
-    font-size: var(--score-font-size);
+  position: absolute;
+  top: 2vh;
+  left: 2vw;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--score-font-size);
 }
 
-.score, .high-score {
-    margin-bottom: 1vh;
+.score,
+.high-score {
+  margin-bottom: 1vh;
 }
 
 .dialog {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background: var(--dialog-background);
-    padding: 3vh;
-    border: 0.2vh solid var(--dialog-border-color);
-    font-size: var(--dialog-font-size);
-    z-index: 1000;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: var(--dialog-background);
+  padding: 3vh;
+  border: 0.2vh solid var(--dialog-border-color);
+  font-size: var(--dialog-font-size);
+  z-index: 1000;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }

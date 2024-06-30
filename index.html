@@ -1,28 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Orion's Chase</title>
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/utilities.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+  </head>
+  <body>
     <div id="game-container" class="game-container">
-        <div class="ground"></div>
-        <div id="score-container" class="score-container">
-            <div id="score" class="score">Score: 0</div>
-            <div id="high-score" class="high-score">High Score: 0</div>
-        </div>
-        <div id="player" class="player game-element"></div>
-        <div id="orion" class="orion game-element"></div>
-        <div id="obstacle" class="obstacle game-element"></div>
+      <div class="ground"></div>
+      <div id="score-container" class="score-container">
+        <div id="score" class="score">Score: 0</div>
+        <div id="high-score" class="high-score">High Score: 0</div>
+      </div>
+      <div id="player" class="player game-element"></div>
+      <div id="orion" class="orion game-element"></div>
+      <div id="obstacle" class="obstacle game-element"></div>
     </div>
     <div id="instruction-dialog" class="dialog">
-        <p id="game-over-message" class="hidden">Game Over! Final Score: <span id="final-score"></span></p>
-        <p id="instruction-message">Press Space Bar or Tap to Start</p>
+      <p id="game-over-message" class="hidden">
+        Game Over! Final Score: <span id="final-score"></span>
+      </p>
+      <p id="instruction-message">Press Space Bar or Tap to Start</p>
     </div>
     <script type="module" src="js/config.js"></script>
     <script type="module" src="js/utils.js"></script>
@@ -33,5 +38,5 @@
     <script type="module" src="js/gameLoop.js"></script>
     <script type="module" src="js/game.js"></script>
     <script type="module" src="js/init.js"></script>
-</body>
+  </body>
 </html>
