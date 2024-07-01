@@ -1,0 +1,18 @@
+{
+  "name": "orions-chase",
+  "version": "1.0.0",
+  "description": "Orion's Chase is a dynamic, side-scrolling game where players must navigate their character and Orion to avoid obstacles and achieve high scores. This repository contains the complete source code for the game, including HTML, CSS, and JavaScript files.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint js/*.js --fix",
+    "format": "npx prettier --write '**/*.{js,css,html,md}'",
+    "fix": "npm run lint && npm run format"
+  },
+  "devDependencies": {
+    "eslint": "^9.6.0",
+    "prettier": "^3.3.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

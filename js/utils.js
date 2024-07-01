@@ -232,10 +232,10 @@ export function addDebugVisualization() {
 export function calculateJumpPosition(jumpStartTime, currentTime) {
   const elapsedTime = currentTime - jumpStartTime;
   const jumpProgress = Math.min(elapsedTime / CONFIG.JUMP.DURATION, 1);
-  const jumpHeight = Math.sin(jumpProgress * Math.PI) * CONFIG.JUMP.HEIGHT;
+  const jumpHeight = Math.sin(jumpProgress * Math.PI) * CONFIG.JUMP.MAX_HEIGHT;
 
   return {
-    bottom: CONFIG.GAME.GROUND_HEIGHT + jumpHeight,
+    bottom: CONFIG.GAME.GROUND_LEVEL + jumpHeight,
     isJumpFinished: jumpProgress === 1,
   };
 }

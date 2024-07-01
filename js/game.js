@@ -11,18 +11,18 @@ class State {
   constructor() {
     this.highScore = 0;
     this.gameState = GameState.INITIAL;
-    this.playerBottom = CONFIG.GAME.GROUND_HEIGHT;
+    this.playerBottom = CONFIG.GAME.GROUND_LEVEL;
     this.obstacleLeft = CONFIG.GAME.CONTAINER_WIDTH;
     this.orionLeft = CONFIG.ORION.INITIAL_LEFT;
     this.isJumping = false;
     this.jumpStartTime = 0;
-    this.currentSpeed = CONFIG.GAME.INITIAL_SPEED;
+    this.currentSpeed = CONFIG.GAME.STARTING_SPEED;
     this.lastFrameTime = 0;
     this.distanceRan = 0;
     this.backgroundPosX = 0;
     this.gameStartTime = 0;
     this.score = 0;
-    this.orionBottom = CONFIG.GAME.GROUND_HEIGHT;
+    this.orionBottom = CONFIG.GAME.GROUND_LEVEL;
     this.orionIsJumping = false;
     this.orionJumpStartTime = 0;
   }
@@ -32,18 +32,18 @@ class State {
    */
   reset() {
     this.gameState = GameState.INITIAL;
-    this.playerBottom = CONFIG.GAME.GROUND_HEIGHT;
+    this.playerBottom = CONFIG.GAME.GROUND_LEVEL;
     this.obstacleLeft = CONFIG.GAME.CONTAINER_WIDTH;
     this.orionLeft = CONFIG.ORION.INITIAL_LEFT;
     this.isJumping = false;
     this.jumpStartTime = 0;
-    this.currentSpeed = CONFIG.GAME.INITIAL_SPEED;
+    this.currentSpeed = CONFIG.GAME.STARTING_SPEED;
     this.lastFrameTime = 0;
     this.distanceRan = 0;
     this.backgroundPosX = 0;
     this.gameStartTime = 0;
     this.score = 0;
-    this.orionBottom = CONFIG.GAME.GROUND_HEIGHT;
+    this.orionBottom = CONFIG.GAME.GROUND_LEVEL;
     this.orionIsJumping = false;
     this.orionJumpStartTime = 0;
   }
@@ -90,7 +90,7 @@ export function initDOMElements() {
   }
 
   // Use the precomputed ground height from CONFIG
-  const groundLevel = CONFIG.GAME.GROUND_HEIGHT;
+  const groundLevel = CONFIG.GAME.GROUND_LEVEL;
   const playerHeight = CONFIG.PLAYER.HEIGHT;
 
   elements.player.style.animationPlayState = "paused";
@@ -100,8 +100,8 @@ export function initDOMElements() {
   elements.orion.style.left = `${CONFIG.ORION.INITIAL_LEFT}px`;
   elements.orion.style.bottom = `${groundLevel}px`;
   elements.obstacle.style.width = `${CONFIG.OBSTACLE.WIDTH}px`;
-    elements.obstacle.style.height = `${CONFIG.OBSTACLE.HEIGHT}px`;
-    elements.obstacle.style.bottom = `${groundLevel + playerHeight / 2}px`;
+  elements.obstacle.style.height = `${CONFIG.OBSTACLE.HEIGHT}px`;
+  elements.obstacle.style.bottom = `${groundLevel + playerHeight / 2}px`;
 }
 
 /**

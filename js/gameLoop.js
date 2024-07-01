@@ -91,7 +91,7 @@ export class GameLoop {
    * @param {number} currentTime - The current time.
    */
   static updatePlayerPosition(currentTime) {
-    const groundLevel = CONFIG.GAME.GROUND_HEIGHT;
+    const groundLevel = CONFIG.GAME.GROUND_LEVEL;
     if (state.isJumping) {
       const { bottom, isJumpFinished } = calculateJumpPosition(
         state.jumpStartTime,
@@ -113,7 +113,7 @@ export class GameLoop {
    * @param {number} currentTime - The current time.
    */
   static updateOrionPosition(currentTime) {
-    const groundLevel = CONFIG.GAME.GROUND_HEIGHT;
+    const groundLevel = CONFIG.GAME.GROUND_LEVEL;
     const jumpDurationSeconds = CONFIG.JUMP.DURATION / 1000;
     const jumpTriggerDistance = state.currentSpeed * jumpDurationSeconds;
     const empiricalAdjustment =
