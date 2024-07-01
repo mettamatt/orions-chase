@@ -20,6 +20,7 @@
   /* Obstacle variables */
   --obstacle-width: 71 px;
   --obstacle-height: 45px;
+  --obstacle-initial-left: 100vw;
 
   /* Game variables */
   --ground-level: 12.5vh;

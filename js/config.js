@@ -40,6 +40,7 @@ const CSS_VARS = {
   orionLeft: getCSSVariable("--orion-left"),
   obstacleWidth: getCSSVariable("--obstacle-width"),
   obstacleHeight: getCSSVariable("--obstacle-height"),
+  obstacleInitialLeft: getCSSVariable("--obstacle-initial-left"),
   groundLevel: getCSSVariable("--ground-level"),
   jumpHeight: getCSSVariable("--jump-height"),
   jumpDuration: getCSSVariable("--jump-duration"),
@@ -79,10 +80,12 @@ export const CONFIG = {
    * Configuration for the obstacles.
    * WIDTH: Width of obstacles (Read-Only).
    * HEIGHT: Height of obstacles (Read-Only).
+   * INITIAL_LEFT: Initial left position of obstacles (Mutable).
    */
   OBSTACLE: {
     WIDTH: parseFloat(CSS_VARS.obstacleWidth),
     HEIGHT: parseFloat(CSS_VARS.obstacleHeight),
+    INITIAL_LEFT: CSS_VARS.obstacleInitialLeft,
   },
   /**
    * Configuration for the game settings.

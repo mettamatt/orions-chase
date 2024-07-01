@@ -154,7 +154,7 @@ export class GameLoop {
   static updateObstaclePosition(deltaTime) {
     state.obstacleLeft -= state.currentSpeed * deltaTime;
     if (state.obstacleLeft <= -CONFIG.OBSTACLE.WIDTH) {
-      state.obstacleLeft = CONFIG.GAME.CONTAINER_WIDTH;
+      state.obstacleLeft = window.innerWidth;
     }
     elements.obstacle.style.left = `${state.obstacleLeft}px`;
   }

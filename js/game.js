@@ -91,17 +91,19 @@ export function initDOMElements() {
 
   // Use the precomputed ground height from CONFIG
   const groundLevel = CONFIG.GAME.GROUND_LEVEL;
-  const playerHeight = CONFIG.PLAYER.HEIGHT;
 
+  // Set initial positions
   elements.player.style.animationPlayState = "paused";
   elements.orion.style.animationPlayState = "paused";
   elements.player.style.left = `${CONFIG.PLAYER.INITIAL_LEFT}px`;
   elements.player.style.bottom = `${groundLevel}px`;
   elements.orion.style.left = `${CONFIG.ORION.INITIAL_LEFT}px`;
   elements.orion.style.bottom = `${groundLevel}px`;
+  elements.obstacle.style.display = "none"; // Hide initially
+  elements.obstacle.style.left = CONFIG.OBSTACLE.INITIAL_LEFT;
   elements.obstacle.style.width = `${CONFIG.OBSTACLE.WIDTH}px`;
   elements.obstacle.style.height = `${CONFIG.OBSTACLE.HEIGHT}px`;
-  elements.obstacle.style.bottom = `${groundLevel + playerHeight / 2}px`;
+  elements.obstacle.style.bottom = `${CONFIG.GAME.GROUND_LEVEL + CONFIG.PLAYER.HEIGHT / 2}px`;
 }
 
 /**
@@ -114,6 +116,7 @@ export function startGame() {
   GameLoop.start();
   elements.instructionDialog.style.display = "none";
   elements.player.style.animationPlayState = "running";
+  elements.obstacle.style.display = "block";
   updateOrionState(false, true);
   elements.gameContainer.classList.add("parallax");
   log("Game started");

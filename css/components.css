@@ -85,8 +85,8 @@
   height: var(--obstacle-height);
   background-image: url("../assets/obstacle.png");
   background-size: cover;
-  display: block;
-  left: var(--player-left);
+  display: none;
+  left: var(--obstacle-initial-left); /* Positioned off-screen to the right */
   bottom: calc(var(--ground-level) + (var(--player-height) / 2));
 }
 

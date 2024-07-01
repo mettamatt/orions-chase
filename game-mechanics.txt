@@ -1,0 +1,4 @@
+Keep the player and Orion in fixed positions, except for jumping.
+Maintain the smooth and gradual increase in game speed over time.
+Ensure obstacles move at a consistent speed, independent of player and Orion.
+Ensure the background moves in sync with the game speed to give the illusion of forward movement.
