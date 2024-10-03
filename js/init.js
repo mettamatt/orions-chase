@@ -1,4 +1,4 @@
-// init.js
+// js/init.js
 import { preloadAssets, log } from "./utils.js";
 import { setupEventListeners } from "./events.js";
 import { setupGameVisuals } from "./assets.js";

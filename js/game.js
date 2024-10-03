@@ -1,4 +1,4 @@
-// game.js
+// js/game.js
 import { CONFIG, GameState } from "./config.js";
 import { log, saveHighScore } from "./utils.js";
 import { GameLoop } from "./gameLoop.js";

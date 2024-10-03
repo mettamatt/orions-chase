@@ -1,4 +1,4 @@
-// gameState.js
+// js/gameState.js
 import { GameState } from "./config.js";
 import {
   resetGame,

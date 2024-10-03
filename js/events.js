@@ -1,4 +1,4 @@
-// events.js
+// js/events.js
 import { state } from "./game.js";
 import { GameState } from "./config.js";
 import { log } from "./utils.js";

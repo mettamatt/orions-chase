@@ -1,4 +1,4 @@
-// ui.js
+// js/ui.js
 import { state, elements } from "./game.js";
 import { CONFIG } from "./config.js";
 
