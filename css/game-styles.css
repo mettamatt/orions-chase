@@ -1,65 +1,10 @@
-/* css/game-styles.css */
-/* Animation Keyframes */
-
-/* Background parallax animation using transform */
-@keyframes move-background {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: -200%;
-  }
-}
-
-/* Player running animation */
-@keyframes player-run-animation {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(-1 * var(--player-width) * var(--player-frames)) 0;
-  }
-}
-
-/* Player jumping animation */
-@keyframes player-jump-animation {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0;
-  }
-}
-
-/* Orion running animation */
-@keyframes orion-run-animation {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(-1 * var(--orion-width) * var(--orion-frames)) 0;
-  }
-}
-
-/* Common jump animation using transform */
-@keyframes common-jump-animation {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-var(--jump-height));
-  }
-}
-
-/* Base Styles and Variables */
-
-/* Root variables - crucial for JavaScript interactions */
+/* Root variables */
 :root {
   /* Player variables */
   --player-width: 201px;
   --player-height: 308px;
   --player-frames: 16;
-  --player-left: calc(5vw + var(--orion-width) + 5vw);
+  --player-left: 35vw; /* Adjusted to 35% of viewport width */
   --player-jump-width: 236px;
   --player-jump-height: 362px;
   --player-jump-frames: 8;
@@ -68,7 +13,7 @@
   --orion-width: 187px;
   --orion-height: 103px;
   --orion-frames: 8;
-  --orion-left: 50vw;
+  --orion-left: 5vw; /* Position Orion at 5% of viewport width */
 
   /* Obstacle variables */
   --obstacle-width: 71px;
@@ -136,16 +81,21 @@ html {
 
 /* Player styles */
 .player {
+  position: absolute;
+  bottom: var(--ground-level);
+  left: var(--player-left);
   width: var(--player-width);
   height: var(--player-height);
-  /* Background image is handled via JavaScript */
+  margin: 0;
+  padding: 0;
   background-size: calc(var(--player-width) * var(--player-frames)) var(--player-height);
-  /* Positioning handled via JavaScript */
-  z-index: 10;
+  background-repeat: no-repeat;
+  background-position: 0 0; /* Ensure background starts at top-left */
+  z-index: 10; /* Higher z-index to appear in front */
   animation: player-run-animation var(--player-animation-duration) steps(var(--player-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
-  transform-origin: bottom center; /* Ensure transform origin is set */
+  transform-origin: bottom center;
 }
 
 .player.running {
@@ -156,24 +106,29 @@ html {
   animation-play-state: running;
   width: var(--player-jump-width);
   height: var(--player-jump-height);
-  background-image: url("../assets/player-jump_sprite_sheet.png"); /* Retained for sprite change */
+  background-image: url("../assets/player-jump_sprite_sheet.png");
   background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
   animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards;
-  /* Additional transform for jump can be handled via JavaScript */
+  /* No need to adjust 'transform' here since it's handled via JavaScript */
 }
 
 /* Orion styles */
 .orion {
+  position: absolute;
+  bottom: var(--ground-level);
+  left: var(--orion-left);
   width: var(--orion-width);
   height: var(--orion-height);
-  /* Background image is handled via JavaScript */
+  margin: 0;
+  padding: 0;
   background-size: calc(var(--orion-width) * var(--orion-frames)) var(--orion-height);
-  /* Positioning handled via JavaScript */
-  z-index: 5;
+  background-repeat: no-repeat;
+  background-position: 0 0; /* Ensure background starts at top-left */
+  z-index: 5; /* Lower z-index to appear behind the player */
   animation: orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
-  transform-origin: bottom center; /* Ensure transform origin is set */
+  transform-origin: bottom center;
 }
 
 .orion.running {
@@ -185,18 +140,20 @@ html {
   /* Jump handled via JavaScript by adding transform */
 }
 
-.player, .orion {
+.player,
+.orion {
   transform-origin: bottom center;
 }
 
 /* Obstacle styles */
 .obstacle {
+  position: absolute;
+  bottom: var(--ground-level);
+  left: var(--obstacle-initial-left);
   width: var(--obstacle-width);
   height: var(--obstacle-height);
-  /* Background image is handled via JavaScript */
   background-size: cover;
   display: none;
-  /* Positioning handled via JavaScript */
 }
 
 /* UI elements */
