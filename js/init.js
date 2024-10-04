@@ -1,18 +1,19 @@
 // js/init.js
-import { preloadAssets, log } from "./utils.js";
-import { setupEventListeners } from "./events.js";
-import { setupGameVisuals } from "./assets.js";
-import { UI } from "./ui.js";
-import { state, initDOMElements } from "./game.js";
-import { loadHighScore } from "./utils.js";
+import { preloadAssets, log, loadHighScore } from './utils.js';
+import { setupEventListeners } from './eventStateHandler.js'; // Updated import path
+import { setupGameVisuals, UI } from './gameLogic.js'; // Updated import path
+import { state, initDOMElements } from './core.js'; // Updated import path
 
+/**
+ * List of assets to preload.
+ */
 const assetList = {
   images: [
-    "assets/player_sprite_sheet.png",
-    "assets/player-jump_sprite_sheet.png",
-    "assets/orion_sprite_sheet.png",
-    "assets/obstacle.png",
-    "assets/background.svg",
+    'assets/player_sprite_sheet.png',
+    'assets/player-jump_sprite_sheet.png',
+    'assets/orion_sprite_sheet.png',
+    'assets/obstacle.png',
+    'assets/background.svg',
   ],
   audio: [],
 };
@@ -30,8 +31,8 @@ export async function initializeGame() {
     setupGameVisuals(assetList);
     UI.updateInitial();
   } catch (error) {
-    log("Failed to initialize game: " + error.message, "error");
+    log('Failed to initialize game: ' + error.message, 'error');
   }
 }
 
-document.addEventListener("DOMContentLoaded", initializeGame);
+document.addEventListener('DOMContentLoaded', initializeGame);

@@ -1,7 +1,10 @@
-// utils.js
-import { CONFIG } from "./config.js";
-import { state, elements } from "./game.js";
+// js/utils.js
+import { CONFIG } from './config.js';
+import { state, elements } from './core.js'; // Updated import path
 
+/**
+ * Holds preloaded assets.
+ */
 const assets = { images: {}, audio: {} };
 
 /**
@@ -9,10 +12,10 @@ const assets = { images: {}, audio: {} };
  * @param {string} message - The message to log.
  * @param {string} [level='info'] - The log level ('info', 'warn', 'error').
  */
-export function log(message, level = "info") {
+export function log(message, level = 'info') {
   const timestamp = new Date().toISOString();
-  console[level === "error" ? "error" : "log"](
-    `[${timestamp}] ${level.toUpperCase()}: ${message}`,
+  console[level === 'error' ? 'error' : 'log'](
+    `[${timestamp}] ${level.toUpperCase()}: ${message}`
   );
 }
 
@@ -21,7 +24,7 @@ export function log(message, level = "info") {
  * @param {Error} error - The error to handle.
  */
 export function handleError(error) {
-  log(`Error: ${error.message}`, "error");
+  log(`Error: ${error.message}`, 'error');
 }
 
 /**
@@ -55,7 +58,10 @@ function loadImage(src) {
         assets.images[src] = img;
         resolve(img);
       };
-      img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+      img.onerror = () => {
+        log(`Failed to load image: ${src}`, 'error');
+        reject(new Error(`Failed to load image: ${src}`));
+      };
       img.src = src;
     }
   });
@@ -73,7 +79,10 @@ function loadAudio(src) {
       assets.audio[src] = audio;
       resolve(audio);
     };
-    audio.onerror = () => reject(new Error(`Failed to load audio: ${src}`));
+    audio.onerror = () => {
+      log(`Failed to load audio: ${src}`, 'error');
+      reject(new Error(`Failed to load audio: ${src}`));
+    };
     audio.src = src;
   });
 }
@@ -92,7 +101,7 @@ export const getAsset = (type, src) => assets[type][src];
  */
 export function saveHighScore(score) {
   try {
-    localStorage.setItem("highScore", score.toString());
+    localStorage.setItem('highScore', score.toString());
   } catch (e) {
     handleError(e);
   }
@@ -104,26 +113,43 @@ export function saveHighScore(score) {
  */
 export function loadHighScore() {
   try {
-    return parseInt(localStorage.getItem("highScore")) || 0;
+    return parseInt(localStorage.getItem('highScore')) || 0;
   } catch (e) {
     handleError(e);
     return 0;
   }
 }
 
-const jumpHeights = [1, 17, 35, 56, 80, 56, 35, 17];
-const numFrames = jumpHeights.length - 1;
+/**
+ * Converts a CSS time value to milliseconds.
+ * @param {string} cssTime - The CSS time value (e.g., '200ms', '0.5s').
+ * @returns {number} The time in milliseconds.
+ */
+export function cssTimeToMs(cssTime) {
+  if (cssTime.endsWith('ms')) {
+    return parseFloat(cssTime);
+  } else if (cssTime.endsWith('s')) {
+    return parseFloat(cssTime) * 1000;
+  }
+  return parseFloat(cssTime);
+}
 
 /**
- * Calculates the jump offset based on the jump start time.
+ * Calculates the jump position based on the jump start time and current time.
+ * Uses a sine function to simulate smooth jumping.
  * @param {number} jumpStartTime - The time the jump started.
- * @returns {number} The jump offset.
+ * @param {number} currentTime - The current time.
+ * @returns {Object} An object containing the bottom position and whether the jump is finished.
  */
-function calculateJumpOffset(jumpStartTime) {
-  const elapsedTime = performance.now() - jumpStartTime;
+export function calculateJumpPosition(jumpStartTime, currentTime) {
+  const elapsedTime = currentTime - jumpStartTime;
   const jumpProgress = Math.min(elapsedTime / CONFIG.JUMP.DURATION, 1);
-  const currentFrameIndex = Math.floor(jumpProgress * numFrames);
-  return jumpHeights[currentFrameIndex];
+  const jumpHeight = Math.sin(jumpProgress * Math.PI) * CONFIG.JUMP.MAX_HEIGHT;
+
+  return {
+    bottom: jumpHeight, // Relative to ground level
+    isJumpFinished: jumpProgress === 1,
+  };
 }
 
 /**
@@ -134,20 +160,21 @@ export function calculateHitboxes() {
   const playerRect = elements.player.getBoundingClientRect();
   const obstacleRect = elements.obstacle.getBoundingClientRect();
 
-  let jumpOffset = 0;
-  if (state.isJumping) {
-    jumpOffset = calculateJumpOffset(state.jumpStartTime);
-  }
-
-  const playerWidth = playerRect.width * 0.2;
-  const playerHeightTop = playerRect.height * 0.1;
-  const playerHeightBottom = playerRect.height * 0.05;
-
   const playerHitbox = {
-    left: playerRect.left + playerWidth,
-    right: playerRect.right - playerWidth,
-    top: playerRect.top + playerHeightTop - jumpOffset,
-    bottom: playerRect.bottom - playerHeightBottom - jumpOffset,
+    left: playerRect.left + playerRect.width * 0.2,
+    right: playerRect.right - playerRect.width * 0.2,
+    top:
+      playerRect.top +
+      playerRect.height * 0.1 -
+      (state.isJumping
+        ? calculateJumpPosition(state.jumpStartTime, performance.now()).bottom
+        : 0),
+    bottom:
+      playerRect.bottom -
+      playerRect.height * 0.05 -
+      (state.isJumping
+        ? calculateJumpPosition(state.jumpStartTime, performance.now()).bottom
+        : 0),
   };
 
   return { playerHitbox, obstacleRect };
@@ -172,70 +199,53 @@ export function checkCollision() {
  * Adds a debug visualization layer to the game.
  */
 export function addDebugVisualization() {
-  const debugLayer = document.createElement("div");
-  debugLayer.style.position = "fixed";
-  debugLayer.style.top = "0";
-  debugLayer.style.left = "0";
-  debugLayer.style.width = "100%";
-  debugLayer.style.height = "100%";
-  debugLayer.style.pointerEvents = "none";
-  debugLayer.style.zIndex = "9999";
+  const debugLayer = document.createElement('div');
+  debugLayer.style.position = 'fixed';
+  debugLayer.style.top = '0';
+  debugLayer.style.left = '0';
+  debugLayer.style.width = '100%';
+  debugLayer.style.height = '100%';
+  debugLayer.style.pointerEvents = 'none';
+  debugLayer.style.zIndex = '9999';
   document.body.appendChild(debugLayer);
 
   function updateDebugVisualization() {
-    debugLayer.innerHTML = "";
+    debugLayer.innerHTML = '';
     const { playerHitbox, obstacleRect } = calculateHitboxes();
 
-    const playerHitboxDiv = document.createElement("div");
-    playerHitboxDiv.style.position = "absolute";
+    const playerHitboxDiv = document.createElement('div');
+    playerHitboxDiv.style.position = 'absolute';
     playerHitboxDiv.style.left = `${playerHitbox.left}px`;
     playerHitboxDiv.style.top = `${playerHitbox.top}px`;
     playerHitboxDiv.style.width = `${playerHitbox.right - playerHitbox.left}px`;
     playerHitboxDiv.style.height = `${playerHitbox.bottom - playerHitbox.top}px`;
-    playerHitboxDiv.style.border = "2px solid blue";
-    playerHitboxDiv.style.boxSizing = "border-box";
+    playerHitboxDiv.style.border = '2px solid blue';
+    playerHitboxDiv.style.boxSizing = 'border-box';
     debugLayer.appendChild(playerHitboxDiv);
 
     const playerRect = elements.player.getBoundingClientRect();
-    const playerBox = document.createElement("div");
-    playerBox.style.position = "absolute";
+    const playerBox = document.createElement('div');
+    playerBox.style.position = 'absolute';
     playerBox.style.left = `${playerRect.left}px`;
     playerBox.style.top = `${playerRect.top}px`;
     playerBox.style.width = `${playerRect.width}px`;
     playerBox.style.height = `${playerRect.height}px`;
-    playerBox.style.border = "2px dashed lightblue";
-    playerBox.style.boxSizing = "border-box";
+    playerBox.style.border = '2px dashed lightblue';
+    playerBox.style.boxSizing = 'border-box';
     debugLayer.appendChild(playerBox);
 
-    const obstacleBox = document.createElement("div");
-    obstacleBox.style.position = "absolute";
+    const obstacleBox = document.createElement('div');
+    obstacleBox.style.position = 'absolute';
     obstacleBox.style.left = `${obstacleRect.left}px`;
     obstacleBox.style.top = `${obstacleRect.top}px`;
     obstacleBox.style.width = `${obstacleRect.width}px`;
     obstacleBox.style.height = `${obstacleRect.height}px`;
-    obstacleBox.style.border = "2px solid red";
-    obstacleBox.style.boxSizing = "border-box";
+    obstacleBox.style.border = '2px solid red';
+    obstacleBox.style.boxSizing = 'border-box';
     debugLayer.appendChild(obstacleBox);
 
     requestAnimationFrame(updateDebugVisualization);
   }
 
   updateDebugVisualization();
-}
-
-/**
- * Calculates the jump position based on the jump start time and current time.
- * @param {number} jumpStartTime - The time the jump started.
- * @param {number} currentTime - The current time.
- * @returns {Object} An object containing the bottom position and whether the jump is finished.
- */
-export function calculateJumpPosition(jumpStartTime, currentTime) {
-  const elapsedTime = currentTime - jumpStartTime;
-  const jumpProgress = Math.min(elapsedTime / CONFIG.JUMP.DURATION, 1);
-  const jumpHeight = Math.sin(jumpProgress * Math.PI) * CONFIG.JUMP.MAX_HEIGHT;
-
-  return {
-    bottom: CONFIG.GAME.GROUND_LEVEL + jumpHeight,
-    isJumpFinished: jumpProgress === 1,
-  };
 }

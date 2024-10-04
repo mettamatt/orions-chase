@@ -1,4 +1,4 @@
-// config.js
+// js/config.js
 
 /**
  * Utility function to retrieve a CSS variable value.
@@ -17,9 +17,9 @@ function getCSSVariable(variableName) {
  * @returns {number} The time in milliseconds.
  */
 function cssTimeToMs(cssTime) {
-  if (cssTime.endsWith("ms")) {
+  if (cssTime.endsWith('ms')) {
     return parseFloat(cssTime);
-  } else if (cssTime.endsWith("s")) {
+  } else if (cssTime.endsWith('s')) {
     return parseFloat(cssTime) * 1000;
   }
   return parseFloat(cssTime);
@@ -30,20 +30,20 @@ function cssTimeToMs(cssTime) {
  * These variables are extracted from the CSS file and are used to define various properties for the game elements.
  */
 const CSS_VARS = {
-  playerWidth: getCSSVariable("--player-width"),
-  playerHeight: getCSSVariable("--player-height"),
-  playerLeft: getCSSVariable("--player-left"),
-  playerJumpWidth: getCSSVariable("--player-jump-width"),
-  playerJumpHeight: getCSSVariable("--player-jump-height"),
-  orionWidth: getCSSVariable("--orion-width"),
-  orionHeight: getCSSVariable("--orion-height"),
-  orionLeft: getCSSVariable("--orion-left"),
-  obstacleWidth: getCSSVariable("--obstacle-width"),
-  obstacleHeight: getCSSVariable("--obstacle-height"),
-  obstacleInitialLeft: getCSSVariable("--obstacle-initial-left"),
-  groundLevel: getCSSVariable("--ground-level"),
-  jumpHeight: getCSSVariable("--jump-height"),
-  jumpDuration: getCSSVariable("--jump-duration"),
+  playerWidth: getCSSVariable('--player-width'),
+  playerHeight: getCSSVariable('--player-height'),
+  playerLeft: getCSSVariable('--player-left'),
+  playerJumpWidth: getCSSVariable('--player-jump-width'),
+  playerJumpHeight: getCSSVariable('--player-jump-height'),
+  orionWidth: getCSSVariable('--orion-width'),
+  orionHeight: getCSSVariable('--orion-height'),
+  orionLeft: getCSSVariable('--orion-left'),
+  obstacleWidth: getCSSVariable('--obstacle-width'),
+  obstacleHeight: getCSSVariable('--obstacle-height'),
+  obstacleInitialLeft: getCSSVariable('--obstacle-initial-left'),
+  groundLevel: getCSSVariable('--ground-level'),
+  jumpHeight: getCSSVariable('--jump-height'),
+  jumpDuration: getCSSVariable('--jump-duration'),
 };
 
 /**
@@ -85,7 +85,7 @@ export const CONFIG = {
   OBSTACLE: {
     WIDTH: parseFloat(CSS_VARS.obstacleWidth),
     HEIGHT: parseFloat(CSS_VARS.obstacleHeight),
-    INITIAL_LEFT: CSS_VARS.obstacleInitialLeft,
+    INITIAL_LEFT: window.innerWidth,
   },
   /**
    * Configuration for the game settings.
@@ -129,8 +129,8 @@ export const CONFIG = {
  * Define game states.
  */
 export const GameState = {
-  INITIAL: "initial",
-  PLAYING: "playing",
-  PAUSED: "paused",
-  CRASHED: "crashed",
+  INITIAL: 'initial',
+  PLAYING: 'playing',
+  PAUSED: 'paused',
+  CRASHED: 'crashed',
 };

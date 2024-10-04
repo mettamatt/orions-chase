@@ -1,11 +1,26 @@
-// gameLoop.js
-import { CONFIG, GameState } from "./config.js";
-import { state, elements, endGame } from "./game.js";
-import { checkCollision, calculateJumpPosition } from "./utils.js";
+// js/gameLoop.js
 
-const FIXED_TIME_STEP = 1000 / 60;
+import { CONFIG, GameState } from './config.js'; // Corrected import
+import { state, elements } from './core.js';
+import { endGame, handleJump, updateOrionState, UI } from './gameLogic.js';
+import { checkCollision, calculateJumpPosition } from './utils.js';
+
+/**
+ * Retrieves a CSS variable value.
+ * @param {string} variableName - The name of the CSS variable.
+ * @returns {number} The numeric value of the CSS variable.
+ */
+function getCSSVariable(variableName) {
+  const styles = getComputedStyle(document.documentElement);
+  const value = styles.getPropertyValue(variableName);
+  return parseFloat(value);
+}
+
+// Define constants at the top of the module
+const FPS = getCSSVariable('--fps') || 60; // Default to 60 FPS if not defined
+const FIXED_TIME_STEP = 1000 / FPS; // Milliseconds per frame
 const MAX_FRAME_SKIP = 5;
-const EMPIRICAL_ADJUSTMENT_FACTOR = 0.3; // Adjust this factor as needed
+const EMPIRICAL_ADJUSTMENT_FACTOR = 0.3; // Adjust as needed
 
 /**
  * GameLoop class to manage the game loop.
@@ -20,7 +35,8 @@ export class GameLoop {
    */
   static start() {
     cancelAnimationFrame(this.animationFrameId);
-    elements.obstacle.style.display = "block";
+    elements.obstacle.style.display = 'block';
+    this.lastTime = performance.now();
     this.animationFrameId = requestAnimationFrame(this.update.bind(this));
   }
 
@@ -36,7 +52,7 @@ export class GameLoop {
    * @param {number} currentTime - The current time.
    */
   static update(currentTime) {
-    if (state.gameState !== GameState.PLAYING) {
+    if (state.gameState !== GameState.PLAYING) { // Corrected condition
       this.animationFrameId = requestAnimationFrame(this.update.bind(this));
       return;
     }
@@ -72,7 +88,7 @@ export class GameLoop {
   /**
    * Updates the game objects.
    * @param {number} currentTime - The current time.
-   * @param {number} deltaTime - The time difference between frames.
+   * @param {number} deltaTime - The time difference between frames in seconds.
    */
   static updateGameObjects(currentTime, deltaTime) {
     this.updatePlayerPosition(currentTime);
@@ -82,7 +98,7 @@ export class GameLoop {
 
     state.currentSpeed = Math.min(
       state.currentSpeed + CONFIG.GAME.ACCELERATION * deltaTime,
-      CONFIG.GAME.MAX_SPEED,
+      CONFIG.GAME.MAX_SPEED
     );
   }
 
@@ -95,12 +111,12 @@ export class GameLoop {
     if (state.isJumping) {
       const { bottom, isJumpFinished } = calculateJumpPosition(
         state.jumpStartTime,
-        currentTime,
+        currentTime
       );
       state.playerBottom = groundLevel + bottom;
       if (isJumpFinished) {
         state.isJumping = false;
-        elements.player.classList.remove("jumping");
+        elements.player.classList.remove('jumping');
       }
     } else {
       state.playerBottom = groundLevel;
@@ -134,7 +150,7 @@ export class GameLoop {
     if (state.orionIsJumping) {
       const { bottom, isJumpFinished } = calculateJumpPosition(
         state.orionJumpStartTime,
-        currentTime,
+        currentTime
       );
       state.orionBottom = groundLevel + bottom;
       if (isJumpFinished) {
@@ -149,7 +165,7 @@ export class GameLoop {
 
   /**
    * Updates the obstacle position.
-   * @param {number} deltaTime - The time difference between frames.
+   * @param {number} deltaTime - The time difference between frames in seconds.
    */
   static updateObstaclePosition(deltaTime) {
     state.obstacleLeft -= state.currentSpeed * deltaTime;
@@ -161,7 +177,7 @@ export class GameLoop {
 
   /**
    * Updates the background position.
-   * @param {number} deltaTime - The time difference between frames.
+   * @param {number} deltaTime - The time difference between frames in seconds.
    */
   static updateBackgroundPosition(deltaTime) {
     state.backgroundPosX -= state.currentSpeed * deltaTime * 0.5;
@@ -176,9 +192,9 @@ export class GameLoop {
     const deltaTime = (currentTime - state.lastFrameTime) / 1000;
     state.distanceRan += state.currentSpeed * deltaTime;
     state.score = Math.floor(
-      state.distanceRan * CONFIG.SCORING.POINTS_PER_PERCENT,
+      state.distanceRan * CONFIG.SCORING.POINTS_PER_PERCENT
     );
-    elements.scoreDisplay.textContent = `Score: ${state.score}`;
+    UI.updateScoreDisplay(state.score);
     state.lastFrameTime = currentTime;
   }
 
