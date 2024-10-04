@@ -1,13 +1,13 @@
-/* game-styles.css */
+/* css/game-styles.css */
 /* Animation Keyframes */
 
-/* Background parallax animation */
+/* Background parallax animation using transform */
 @keyframes move-background {
   from {
     background-position: 0 0;
   }
   to {
-    background-position: -100vw 0;
+    background-position: -200%;
   }
 }
 
@@ -27,10 +27,7 @@
     background-position: 0 0;
   }
   to {
-    background-position: calc(
-        -1 * var(--player-jump-width) * var(--player-jump-frames)
-      )
-      0;
+    background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0;
   }
 }
 
@@ -44,14 +41,13 @@
   }
 }
 
-/* Common jump animation */
+/* Common jump animation using transform */
 @keyframes common-jump-animation {
-  0%,
-  100% {
-    bottom: var(--ground-level);
+  0%, 100% {
+    transform: translateY(0);
   }
   50% {
-    bottom: calc(var(--ground-level) + var(--jump-height));
+    transform: translateY(-var(--jump-height));
   }
 }
 
@@ -82,7 +78,7 @@
   /* Game variables */
   --ground-level: 12.5vh;
   --game-speed: 20s;
-  --fps: 24;
+  --fps: 60; /* Updated to 60 for smoother animations */
 
   /* Jump variables */
   --jump-height: 23vh;
@@ -90,9 +86,7 @@
 
   /* Animation durations */
   --player-animation-duration: calc(var(--player-frames) / var(--fps) * 1s);
-  --player-jump-animation-duration: calc(
-    var(--player-jump-frames) / var(--fps) * 1s
-  );
+  --player-jump-animation-duration: calc(var(--player-jump-frames) / var(--fps) * 1s);
   --orion-animation-duration: calc(var(--orion-frames) / var(--fps) * 1s);
 
   /* UI variables */
@@ -119,13 +113,15 @@ html {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: url("../assets/background.svg") repeat-x;
-  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-size: cover; /* Ensures the background covers the container */
+  background-position: center; /* Centers the background image */
 }
 
 .game-container.parallax {
   animation: move-background var(--game-speed) linear infinite;
-  will-change: background-position;
+  background-repeat: repeat-x; /* Allows seamless looping */
+  background-size: cover; /* Ensure background covers the container */
 }
 
 /* Ground */
@@ -140,44 +136,44 @@ html {
 
 /* Player styles */
 .player {
-  composes: game-element;
   width: var(--player-width);
   height: var(--player-height);
-  background-image: url("../assets/player_sprite_sheet.png");
-  background-size: calc(var(--player-width) * var(--player-frames))
-    var(--player-height);
-  left: var(--player-left);
+  /* Background image is handled via JavaScript */
+  background-size: calc(var(--player-width) * var(--player-frames)) var(--player-height);
+  /* Positioning handled via JavaScript */
   z-index: 10;
-  animation: player-run-animation var(--player-animation-duration)
-    steps(var(--player-frames)) infinite;
+  animation: player-run-animation var(--player-animation-duration) steps(var(--player-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
+  transform-origin: bottom center; /* Ensure transform origin is set */
+}
+
+.player.running {
+  animation-play-state: running;
 }
 
 .player.jumping {
+  animation-play-state: running;
   width: var(--player-jump-width);
   height: var(--player-jump-height);
-  background-image: url("../assets/player-jump_sprite_sheet.png");
-  background-size: calc(var(--player-jump-width) * var(--player-jump-frames))
-    var(--player-jump-height);
-  animation: player-jump-animation var(--jump-duration)
-    steps(var(--player-jump-frames)) forwards;
+  background-image: url("../assets/player-jump_sprite_sheet.png"); /* Retained for sprite change */
+  background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
+  animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards;
+  /* Additional transform for jump can be handled via JavaScript */
 }
 
 /* Orion styles */
 .orion {
-  composes: game-element;
   width: var(--orion-width);
   height: var(--orion-height);
-  left: var(--orion-left);
-  background-image: url("../assets/orion_sprite_sheet.png");
-  background-size: calc(var(--orion-width) * var(--orion-frames))
-    var(--orion-height);
+  /* Background image is handled via JavaScript */
+  background-size: calc(var(--orion-width) * var(--orion-frames)) var(--orion-height);
+  /* Positioning handled via JavaScript */
   z-index: 5;
-  animation: orion-run-animation var(--orion-animation-duration)
-    steps(var(--orion-frames)) infinite;
+  animation: orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
+  transform-origin: bottom center; /* Ensure transform origin is set */
 }
 
 .orion.running {
@@ -185,22 +181,22 @@ html {
 }
 
 .orion.jumping {
-  animation:
-    orion-run-animation var(--orion-animation-duration)
-      steps(var(--orion-frames)) infinite,
-    common-jump-animation var(--jump-duration) ease-out forwards;
+  /* Removed CSS-based jumping animations */
+  /* Jump handled via JavaScript by adding transform */
+}
+
+.player, .orion {
+  transform-origin: bottom center;
 }
 
 /* Obstacle styles */
 .obstacle {
-  composes: game-element;
   width: var(--obstacle-width);
   height: var(--obstacle-height);
-  background-image: url("../assets/obstacle.png");
+  /* Background image is handled via JavaScript */
   background-size: cover;
   display: none;
-  left: var(--obstacle-initial-left); /* Positioned off-screen to the right */
-  bottom: calc(var(--ground-level) + (var(--player-height) / 2));
+  /* Positioning handled via JavaScript */
 }
 
 /* UI elements */
