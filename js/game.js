@@ -797,8 +797,7 @@ class GameLoopClass {
   updateOrionPosition() {
     const timeSinceGameStart = performance.now() - state.gameStartTime;
     const jumpDurationSeconds = CONFIG.JUMP.DURATION / 1000;
-    const jumpInterval =
-      (state.currentSpeed * jumpDurationSeconds * 2) / 1000; // Adjust as needed
+    const jumpInterval = (state.currentSpeed * jumpDurationSeconds * 2) / 1000; // Adjust as needed
 
     if (!state.orionIsJumping && timeSinceGameStart >= jumpInterval * 1000) {
       state.orionIsJumping = true;
