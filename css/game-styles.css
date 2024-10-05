@@ -1,5 +1,12 @@
+/* css/game-styles.css */
+
 /* Root variables */
 :root {
+  /* Background variables */
+  --background-image: url("../assets/background.svg"); /* Ensure this is your seamless image */
+  --background-repeat: repeat-x; /* Repeat horizontally */
+  --background-speed: 20s; /* Initial background speed */
+
   /* Player variables */
   --player-width: 201px;
   --player-height: 308px;
@@ -22,7 +29,7 @@
 
   /* Game variables */
   --ground-level: 12.5vh;
-  --game-speed: 20s;
+  --game-speed: 200px/s; /* Not directly used in CSS */
   --fps: 60; /* Updated to 60 for smoother animations */
 
   /* Jump variables */
@@ -58,15 +65,22 @@ html {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background-repeat: no-repeat;
-  background-size: cover; /* Ensures the background covers the container */
-  background-position: center; /* Centers the background image */
+  /* Removed background properties */
 }
 
-.game-container.parallax {
-  animation: move-background var(--game-speed) linear infinite;
-  background-repeat: repeat-x; /* Allows seamless looping */
-  background-size: cover; /* Ensure background covers the container */
+/* Background Layer */
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--ground-level)); /* Fill the space above the ground */
+  background-image: var(--background-image);
+  background-repeat: repeat-x; /* Ensure seamless horizontal tiling */
+  background-size: 100% auto; /* Scale width to 100%, height adjusts to maintain aspect ratio */
+  background-position: bottom; /* Align the bottom of the background image with the top of the ground */
+  z-index: -2; /* Behind the ground and other game elements */
+  animation: move-background var(--background-speed) linear infinite;
 }
 
 /* Ground */
@@ -77,6 +91,65 @@ html {
   width: 100%;
   height: var(--ground-level);
   background-color: #808080;
+  z-index: -1; /* Above the background but below interactive elements */
+}
+
+/* Parallax Animation */
+.game-container.parallax .background {
+  animation: move-background var(--background-speed) linear infinite;
+}
+
+/* Animation Keyframes */
+
+/* Background parallax animation */
+@keyframes move-background {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -100vw 0; /* Scroll to the left by 100% of viewport width */
+  }
+}
+
+/* Player running animation */
+@keyframes player-run-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--player-width) * var(--player-frames)) 0;
+  }
+}
+
+/* Player jumping animation */
+@keyframes player-jump-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0;
+  }
+}
+
+/* Orion running animation */
+@keyframes orion-run-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--orion-width) * var(--orion-frames)) 0;
+  }
+}
+
+/* Common jump animation */
+@keyframes common-jump-animation {
+  0%,
+  100% {
+    bottom: var(--ground-level);
+  }
+  50% {
+    bottom: calc(var(--ground-level) + var(--jump-height));
+  }
 }
 
 /* Player styles */
@@ -88,6 +161,7 @@ html {
   height: var(--player-height);
   margin: 0;
   padding: 0;
+  background-image: url("../assets/player_sprite_sheet.png"); /* Set running sprite sheet */
   background-size: calc(var(--player-width) * var(--player-frames)) var(--player-height);
   background-repeat: no-repeat;
   background-position: 0 0; /* Ensure background starts at top-left */
@@ -103,13 +177,10 @@ html {
 }
 
 .player.jumping {
-  animation-play-state: running;
-  width: var(--player-jump-width);
-  height: var(--player-jump-height);
-  background-image: url("../assets/player-jump_sprite_sheet.png");
+  /* Trigger jump sprite sheet and jump animation */
+  animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards, common-jump-animation var(--jump-duration) ease-in-out forwards;
+  background-image: url("../assets/player-jump_sprite_sheet.png"); /* Set jumping sprite sheet */
   background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
-  animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards;
-  /* No need to adjust 'transform' here since it's handled via JavaScript */
 }
 
 /* Orion styles */
@@ -121,10 +192,11 @@ html {
   height: var(--orion-height);
   margin: 0;
   padding: 0;
+  background-image: url("../assets/orion_sprite_sheet.png");
   background-size: calc(var(--orion-width) * var(--orion-frames)) var(--orion-height);
   background-repeat: no-repeat;
   background-position: 0 0; /* Ensure background starts at top-left */
-  z-index: 5; /* Lower z-index to appear behind the player */
+  z-index: 8; /* Ensure obstacle appears between Orion and Player */
   animation: orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
@@ -136,13 +208,8 @@ html {
 }
 
 .orion.jumping {
-  /* Removed CSS-based jumping animations */
-  /* Jump handled via JavaScript by adding transform */
-}
-
-.player,
-.orion {
-  transform-origin: bottom center;
+  /* Trigger common jump animation */
+  animation: common-jump-animation var(--jump-duration) ease-in-out forwards;
 }
 
 /* Obstacle styles */
@@ -154,6 +221,7 @@ html {
   height: var(--obstacle-height);
   background-size: cover;
   display: none;
+  z-index: 8; /* Ensure obstacle appears between Orion and Player */
 }
 
 /* UI elements */
@@ -209,4 +277,45 @@ html {
 /* Hidden class */
 .hidden {
   display: none !important;
+}
+
+/* Player Run Animation */
+@keyframes player-run-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--player-width) * var(--player-frames)) 0;
+  }
+}
+
+/* Player Jump Animation */
+@keyframes player-jump-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0;
+  }
+}
+
+/* Orion Run Animation */
+@keyframes orion-run-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--orion-width) * var(--orion-frames)) 0;
+  }
+}
+
+/* Common Jump Animation */
+@keyframes common-jump-animation {
+  0%,
+  100% {
+    bottom: var(--ground-level);
+  }
+  50% {
+    bottom: calc(var(--ground-level) + var(--jump-height));
+  }
 }
