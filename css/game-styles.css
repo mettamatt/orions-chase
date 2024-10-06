@@ -3,9 +3,9 @@
 /* Root variables */
 :root {
   /* Background variables */
-  --background-image: url("../assets/background.svg"); /* Ensure this is your seamless image */
   --background-repeat: repeat-x; /* Repeat horizontally */
-  --background-speed: 20s; /* Initial background speed */
+  --background-speed: 60s; /* Sky moves slowly */
+  --ground-speed: 20s;
 
   /* Player variables */
   --player-width: 201px;
@@ -28,7 +28,7 @@
   --obstacle-initial-left: 100vw;
 
   /* Game variables */
-  --ground-level: 12.5vh;
+  --ground-level: 100px; /* Adjust based on ground.svg height */
   --game-speed: 200px/s; /* Not directly used in CSS */
   --fps: 60; /* Updated to 60 for smoother animations */
 
@@ -68,46 +68,62 @@ html {
   /* Removed background properties */
 }
 
-/* Background Layer */
-.background {
+/* Sky Background Layer */
+.sky-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh - var(--ground-level)); /* Fill the space above the ground */
-  background-image: var(--background-image);
-  background-repeat: repeat-x; /* Ensure seamless horizontal tiling */
-  background-size: 100% auto; /* Scale width to 100%, height adjusts to maintain aspect ratio */
-  background-position: bottom; /* Align the bottom of the background image with the top of the ground */
-  z-index: -2; /* Behind the ground and other game elements */
-  animation: move-background var(--background-speed) linear infinite;
+  height: calc(100% - var(--ground-level)); /* Fill the space above the ground */
+  background-image: url("../assets/sky.svg");
+  background-repeat: repeat-x;
+  background-size: auto 100%; /* Maintain height, prevent horizontal stretching */
+  background-position: bottom center;
+  z-index: -3; /* Behind everything else */
 }
 
-/* Ground */
+/* Ground Layer */
 .ground {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: var(--ground-level);
-  background-color: #808080;
-  z-index: -1; /* Above the background but below interactive elements */
-}
-
-/* Parallax Animation */
-.game-container.parallax .background {
-  animation: move-background var(--background-speed) linear infinite;
+  height: calc(var(--ground-level) * 3);
+  background-image: url("../assets/ground.svg");
+  background-repeat: repeat-x;
+  background-size: cover; /* Assuming ground.svg tiles seamlessly */
+  background-position: bottom center;
+  z-index: -2; /* Above the sky but behind game elements */
 }
 
 /* Animation Keyframes */
 
-/* Background parallax animation */
-@keyframes move-background {
+/* Start background animations when parallax is active */
+.game-container.parallax .sky-background {
+  animation: move-sky var(--background-speed) linear infinite;
+}
+
+.game-container.parallax .ground {
+  animation: move-ground var(--ground-speed) linear infinite;
+}
+
+/* Sky background animation */
+@keyframes move-sky {
   from {
     background-position: 0 0;
   }
   to {
-    background-position: -100vw 0; /* Scroll to the left by 100% of viewport width */
+    background-position: -50% 0; /* Sky moves slower for parallax effect */
+  }
+}
+
+/* Ground animation */
+@keyframes move-ground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -100% 0; /* Ground moves faster */
   }
 }
 
@@ -277,45 +293,4 @@ html {
 /* Hidden class */
 .hidden {
   display: none !important;
-}
-
-/* Player Run Animation */
-@keyframes player-run-animation {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(-1 * var(--player-width) * var(--player-frames)) 0;
-  }
-}
-
-/* Player Jump Animation */
-@keyframes player-jump-animation {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0;
-  }
-}
-
-/* Orion Run Animation */
-@keyframes orion-run-animation {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: calc(-1 * var(--orion-width) * var(--orion-frames)) 0;
-  }
-}
-
-/* Common Jump Animation */
-@keyframes common-jump-animation {
-  0%,
-  100% {
-    bottom: var(--ground-level);
-  }
-  50% {
-    bottom: calc(var(--ground-level) + var(--jump-height));
-  }
 }

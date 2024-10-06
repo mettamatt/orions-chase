@@ -1,0 +1,14 @@
+<!-- assets/sky.svg -->
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Blue sky with clouds -->
+    <rect width="800" height="600" fill="skyblue" />
+    <circle cx="100" cy="100" r="50" fill="white" opacity="0.8"/>
+    <circle cx="180" cy="100" r="30" fill="white" opacity="0.8"/>
+    <circle cx="160" cy="120" r="40" fill="white" opacity="0.8"/>
+    <circle cx="300" cy="80" r="40" fill="white" opacity="0.8"/>
+    <circle cx="380" cy="80" r="20" fill="white" opacity="0.8"/>
+    <circle cx="360" cy="100" r="30" fill="white" opacity="0.8"/>
+    <circle cx="600" cy="120" r="50" fill="white" opacity="0.8"/>
+    <circle cx="680" cy="120" r="30" fill="white" opacity="0.8"/>
+    <circle cx="660" cy="140" r="40" fill="white" opacity="0.8"/>
+</svg>

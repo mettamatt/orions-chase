@@ -321,6 +321,8 @@ const initDOMElements = () => {
     'final-score': 'finalScore',
     'instruction-dialog': 'instructionDialog',
     'game-container': 'gameContainer',
+    'sky-background': 'skyBackground', 
+    'ground': 'ground',               
     'game-over-message': 'gameOverMessage',
     'instruction-message': 'instructionMessage',
   };
@@ -340,6 +342,7 @@ const initDOMElements = () => {
   // Ensure bottom positions are set via CSS
   elements.player.style.bottom = 'var(--ground-level)';
   elements.orion.style.bottom = 'var(--ground-level)';
+  elements.ground.style.bottom = '0'; // Ground is already positioned at bottom
 
   // Remove any vertical translations
   elements.player.style.transform = 'translateY(0)';
@@ -410,10 +413,11 @@ const UI = {
 
 const assetToElementMap = {
   'player_sprite_sheet.png': 'player',
-  // 'player-jump_sprite_sheet.png': 'player', // Removed to prevent initial application
+  // 'player-jump_sprite_sheet.png': 'player', // Already handled separately
   'orion_sprite_sheet.png': 'orion',
   'obstacle.png': 'obstacle',
-  'background.svg': 'gameContainer',
+  'sky.svg': 'skyBackground',
+  'ground.svg': 'ground',
 };
 
 /**
@@ -431,15 +435,10 @@ const setupGameVisuals = (assetList) => {
     const element = elements[elementKey];
     const image = getAsset('images', asset);
     if (element && image) {
-      if (elementKey === 'gameContainer') {
-        // For background, ensure no-repeat and cover
-        element.style.backgroundImage = `url(${image.src})`;
-        element.style.backgroundRepeat = 'repeat-x';
-        element.style.backgroundSize = 'cover';
-        element.style.backgroundPosition = 'center';
-      } else {
+      if (['player_sprite_sheet.png', 'orion_sprite_sheet.png', 'obstacle.png'].includes(assetName)) {
         element.style.backgroundImage = `url(${image.src})`;
       }
+      // Background images are handled via CSS, no action needed here
     } else {
       log(`Failed to set background image for ${elementKey}`, LOG_LEVELS.WARN);
     }
@@ -904,7 +903,8 @@ const assetList = {
     // 'assets/player-jump_sprite_sheet.png', // Removed from initial mapping
     'assets/orion_sprite_sheet.png',
     'assets/obstacle.png',
-    'assets/background.svg',
+    'assets/sky.svg',      
+    'assets/ground.svg',
   ],
   audio: [], // Add audio asset paths if any
 };
