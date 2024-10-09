@@ -146,8 +146,13 @@ const calculateJumpPosition = (
   const jumpProgress = Math.min(elapsedTime / duration, 1);
   const jumpHeight = Math.sin(jumpProgress * Math.PI) * maxHeight;
 
+  // Ensure the player doesn't move beyond the container's top
+  const maxPlayerY =
+    CONFIG.GAME.CONTAINER_HEIGHT - CONFIG.PLAYER.HEIGHT - CONFIG.GAME.GROUND_LEVEL;
+  const adjustedJumpY = Math.min(jumpHeight, maxPlayerY);
+
   return {
-    jumpY: jumpHeight,
+    jumpY: adjustedJumpY,
     isJumpFinished: jumpProgress === 1,
   };
 };
@@ -244,7 +249,7 @@ const CONFIG = {
     ACCELERATION: 10, // pixels per second squared
     GROUND_LEVEL: (parseFloat(CSS_VARS.groundLevel) * window.innerHeight) / 100,
     CONTAINER_WIDTH: window.innerWidth,
-    WINDOW_WIDTH: window.innerWidth,
+    CONTAINER_HEIGHT: window.innerHeight,
     SPEED_INCREMENT_INTERVAL: 5000, // milliseconds
     SPEED_INCREMENT_AMOUNT: 20, // pixels per second
   },
@@ -435,10 +440,11 @@ const setupGameVisuals = (assetList) => {
     const element = elements[elementKey];
     const image = getAsset('images', asset);
     if (element && image) {
-      if (['player_sprite_sheet.png', 'orion_sprite_sheet.png', 'obstacle.png'].includes(assetName)) {
+      // Skip setting background-image for the player element
+      if (['orion_sprite_sheet.png', 'obstacle.png'].includes(assetName)) {
         element.style.backgroundImage = `url(${image.src})`;
       }
-      // Background images are handled via CSS, no action needed here
+      // Background images for the player are handled via CSS classes
     } else {
       log(`Failed to set background image for ${elementKey}`, LOG_LEVELS.WARN);
     }
@@ -625,6 +631,7 @@ const handleJump = () => {
   if (!state.isJumping) {
     state.isJumping = true;
     state.jumpStartTime = performance.now();
+    elements.player.classList.remove('running');
     elements.player.classList.add('jumping');
     log('Player jumped.', LOG_LEVELS.INFO);
   }
@@ -752,7 +759,7 @@ class GameLoopClass {
   updateObstaclePosition(deltaTime) {
     state.obstacleX -= state.currentSpeed * deltaTime;
     if (state.obstacleX <= -CONFIG.OBSTACLE.WIDTH) {
-      state.obstacleX = CONFIG.GAME.WINDOW_WIDTH;
+      state.obstacleX = CONFIG.GAME.CONTAINER_WIDTH;
       state.score += CONFIG.SCORING.OBSTACLE_BONUS; // Bonus for passing obstacle
       UI.updateScoreDisplay(state.score);
     }
@@ -786,7 +793,6 @@ class GameLoopClass {
     } else {
       state.playerY = 0;
     }
-    // Apply vertical translation only
     elements.player.style.transform = `translateY(-${state.playerY}px)`;
   }
 

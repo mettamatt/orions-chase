@@ -38,7 +38,7 @@
 
   /* Animation durations */
   --player-animation-duration: calc(var(--player-frames) / var(--fps) * 1s);
-  --player-jump-animation-duration: calc(var(--player-jump-frames) / var(--fps) * 1s);
+  --player-jump-animation-duration: var(--jump-duration);
   --orion-animation-duration: calc(var(--orion-frames) / var(--fps) * 1s);
 
   /* UI variables */
@@ -194,9 +194,15 @@ html {
 
 .player.jumping {
   /* Trigger jump sprite sheet and jump animation */
-  animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards, common-jump-animation var(--jump-duration) ease-in-out forwards;
+  animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards;
   background-image: url("../assets/player-jump_sprite_sheet.png"); /* Set jumping sprite sheet */
+  width: var(--player-jump-width);
+  height: var(--player-jump-height);
+  left: calc(var(--player-left) - ((var(--player-jump-width) - var(--player-width)) / 2));
+  bottom: calc(var(--ground-level) - (var(--player-jump-height) - var(--player-height)));
   background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
+  transform-origin: bottom center;
+  animation-fill-mode: forwards;
 }
 
 /* Orion styles */
