@@ -253,12 +253,12 @@ html {
 .obstacle {
   position: absolute;
   bottom: var(--ground-level);
-  left: var(--obstacle-initial-left);
+  left: 0; /* Ensure initial left is set */
   width: var(--obstacle-width);
   height: var(--obstacle-height);
   background-size: cover;
   display: none;
-  z-index: 8; /* Ensure obstacle appears between Orion and Player */
+  z-index: 8;
 }
 
 /* UI elements */

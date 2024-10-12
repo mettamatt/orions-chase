@@ -249,14 +249,14 @@ const CONFIG = {
     STARTING_SPEED: 200, // pixels per second
     MAX_SPEED: 600, // pixels per second
     ACCELERATION: 10, // pixels per second squared
-    GROUND_LEVEL: (parseFloat(CSS_VARS.groundLevel) * window.innerHeight) / 100,
+    GROUND_LEVEL: parseCSSValue(CSS_VARS.groundLevel),
     CONTAINER_WIDTH: window.innerWidth,
     CONTAINER_HEIGHT: window.innerHeight,
     SPEED_INCREMENT_INTERVAL: 5000, // milliseconds
     SPEED_INCREMENT_AMOUNT: 20, // pixels per second
   },
   JUMP: {
-    MAX_HEIGHT: parseFloat(CSS_VARS.jumpHeight),
+    MAX_HEIGHT: parseCSSValue(CSS_VARS.jumpHeight),
     DURATION: cssTimeToMs(CSS_VARS.jumpDuration),
   },
   SCORING: {
@@ -294,7 +294,7 @@ class State {
     this.highScore = loadHighScore();
     this.gameState = GAME_STATES.INITIAL;
     this.playerY = 0; // Vertical position
-    this.obstacleX = CONFIG.OBSTACLE.INITIAL_LEFT;
+    this.obstacleX = CONFIG.GAME.CONTAINER_WIDTH;
     this.isJumping = false;
     this.jumpStartTime = 0;
     this.currentSpeed = CONFIG.GAME.STARTING_SPEED;
@@ -401,7 +401,6 @@ const UI = {
     // Apply vertical translation only
     elements.player.style.transform = `translateY(-${state.playerY}px)`;
     elements.orion.style.transform = `translateY(-${state.orionY}px)`;
-    elements.obstacle.style.transform = `translate(${state.obstacleX}px, ${0}px)`;
     elements.obstacle.style.display = isPlaying ? 'block' : 'none';
 
     elements.gameOverMessage.style.display = 'none';
@@ -772,7 +771,7 @@ class GameLoopClass {
     const obstacleBottom = playerCenterY - CONFIG.OBSTACLE.HEIGHT / 2;
     elements.obstacle.style.bottom = `${obstacleBottom}px`;
 
-    elements.obstacle.style.left = `${state.obstacleX}px`;
+    elements.obstacle.style.left = `${state.obstacleX}px`; // Use only 'left' for horizontal positioning
   }
 
   /**
