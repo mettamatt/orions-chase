@@ -25,19 +25,37 @@
       </div>
 
       <!-- Game Elements -->
-      <div id="orion" class="orion game-element" aria-label="Orion Character"></div>
-      <div id="player" class="player game-element" aria-label="Player Character"></div>
-      <div id="obstacle" class="obstacle game-element" aria-label="Obstacle"></div>
+      <div
+        id="orion"
+        class="orion game-element"
+        aria-label="Orion Character"
+      ></div>
+      <div
+        id="player"
+        class="player game-element"
+        aria-label="Player Character"
+      ></div>
+      <div
+        id="obstacle"
+        class="obstacle game-element"
+        aria-label="Obstacle"
+      ></div>
     </div>
 
     <!-- Instruction and Game Over Dialogs -->
-    <div id="instruction-dialog" class="dialog" role="dialog" aria-labelledby="instruction-message" aria-hidden="true">
+    <div
+      id="instruction-dialog"
+      class="dialog"
+      role="dialog"
+      aria-labelledby="instruction-message"
+      aria-hidden="true"
+    >
       <p id="game-over-message" class="hidden">
         Game Over! Final Score: <span id="final-score"></span>
       </p>
       <p id="instruction-message">Press Space Bar or Tap to Start</p>
     </div>
-    
+
     <script type="module" src="js/game.js" defer></script>
   </body>
 </html>

@@ -29,7 +29,7 @@
 
   /* Game variables */
   --ground-level: 100px; /* Adjust based on ground.svg height */
-  --game-speed: 200px/s; /* Not directly used in CSS */
+  --game-speed: 200px / s; /* Not directly used in CSS */
   --fps: 60; /* Updated to 60 for smoother animations */
 
   /* Jump variables */
@@ -74,8 +74,10 @@ html {
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - var(--ground-level)); /* Fill the space above the ground */
-  background-image: url("../assets/sky.svg");
+  height: calc(
+    100% - var(--ground-level)
+  ); /* Fill the space above the ground */
+  background-image: url('../assets/sky.svg');
   background-repeat: repeat-x;
   background-size: auto 100%; /* Maintain height, prevent horizontal stretching */
   background-position: bottom center;
@@ -89,7 +91,7 @@ html {
   left: 0;
   width: 100%;
   height: calc(var(--ground-level) * 3);
-  background-image: url("../assets/ground.svg");
+  background-image: url('../assets/ground.svg');
   background-repeat: repeat-x;
   background-size: cover; /* Assuming ground.svg tiles seamlessly */
   background-position: bottom center;
@@ -143,7 +145,10 @@ html {
     background-position: 0 0;
   }
   to {
-    background-position: calc(-1 * var(--player-jump-width) * var(--player-jump-frames)) 0;
+    background-position: calc(
+        -1 * var(--player-jump-width) * var(--player-jump-frames)
+      )
+      0;
   }
 }
 
@@ -177,12 +182,14 @@ html {
   height: var(--player-height);
   margin: 0;
   padding: 0;
-  background-image: url("../assets/player_sprite_sheet.png"); /* Set running sprite sheet */
-  background-size: calc(var(--player-width) * var(--player-frames)) var(--player-height);
+  background-image: url('../assets/player_sprite_sheet.png'); /* Set running sprite sheet */
+  background-size: calc(var(--player-width) * var(--player-frames))
+    var(--player-height);
   background-repeat: no-repeat;
   background-position: 0 0; /* Ensure background starts at top-left */
   z-index: 10; /* Higher z-index to appear in front */
-  animation: player-run-animation var(--player-animation-duration) steps(var(--player-frames)) infinite;
+  animation: player-run-animation var(--player-animation-duration)
+    steps(var(--player-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
   transform-origin: bottom center;
@@ -194,13 +201,19 @@ html {
 
 .player.jumping {
   /* Trigger jump sprite sheet and jump animation */
-  animation: player-jump-animation var(--player-jump-animation-duration) steps(var(--player-jump-frames)) forwards;
-  background-image: url("../assets/player-jump_sprite_sheet.png"); /* Set jumping sprite sheet */
+  animation: player-jump-animation var(--player-jump-animation-duration)
+    steps(var(--player-jump-frames)) forwards;
+  background-image: url('../assets/player-jump_sprite_sheet.png'); /* Set jumping sprite sheet */
   width: var(--player-jump-width);
   height: var(--player-jump-height);
-  left: calc(var(--player-left) - ((var(--player-jump-width) - var(--player-width)) / 2));
-  bottom: calc(var(--ground-level) - (var(--player-jump-height) - var(--player-height)));
-  background-size: calc(var(--player-jump-width) * var(--player-jump-frames)) var(--player-jump-height);
+  left: calc(
+    var(--player-left) - ((var(--player-jump-width) - var(--player-width)) / 2)
+  );
+  bottom: calc(
+    var(--ground-level) - (var(--player-jump-height) - var(--player-height))
+  );
+  background-size: calc(var(--player-jump-width) * var(--player-jump-frames))
+    var(--player-jump-height);
   transform-origin: bottom center;
   animation-fill-mode: forwards;
 }
@@ -214,12 +227,14 @@ html {
   height: var(--orion-height);
   margin: 0;
   padding: 0;
-  background-image: url("../assets/orion_sprite_sheet.png");
-  background-size: calc(var(--orion-width) * var(--orion-frames)) var(--orion-height);
+  background-image: url('../assets/orion_sprite_sheet.png');
+  background-size: calc(var(--orion-width) * var(--orion-frames))
+    var(--orion-height);
   background-repeat: no-repeat;
   background-position: 0 0; /* Ensure background starts at top-left */
   z-index: 8; /* Ensure obstacle appears between Orion and Player */
-  animation: orion-run-animation var(--orion-animation-duration) steps(var(--orion-frames)) infinite;
+  animation: orion-run-animation var(--orion-animation-duration)
+    steps(var(--orion-frames)) infinite;
   animation-play-state: paused;
   will-change: transform, background-position;
   transform-origin: bottom center;
@@ -280,7 +295,9 @@ html {
 .paused {
   opacity: 0.7;
   filter: grayscale(50%);
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease;
 }
 
 /* Flexbox utilities */

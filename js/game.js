@@ -148,7 +148,9 @@ const calculateJumpPosition = (
 
   // Ensure the player doesn't move beyond the container's top
   const maxPlayerY =
-    CONFIG.GAME.CONTAINER_HEIGHT - CONFIG.PLAYER.HEIGHT - CONFIG.GAME.GROUND_LEVEL;
+    CONFIG.GAME.CONTAINER_HEIGHT -
+    CONFIG.PLAYER.HEIGHT -
+    CONFIG.GAME.GROUND_LEVEL;
   const adjustedJumpY = Math.min(jumpHeight, maxPlayerY);
 
   return {
@@ -326,8 +328,8 @@ const initDOMElements = () => {
     'final-score': 'finalScore',
     'instruction-dialog': 'instructionDialog',
     'game-container': 'gameContainer',
-    'sky-background': 'skyBackground', 
-    'ground': 'ground',               
+    'sky-background': 'skyBackground',
+    ground: 'ground',
     'game-over-message': 'gameOverMessage',
     'instruction-message': 'instructionMessage',
   };
@@ -909,7 +911,7 @@ const assetList = {
     // 'assets/player-jump_sprite_sheet.png', // Removed from initial mapping
     'assets/orion_sprite_sheet.png',
     'assets/obstacle.png',
-    'assets/sky.svg',      
+    'assets/sky.svg',
     'assets/ground.svg',
   ],
   audio: [], // Add audio asset paths if any
