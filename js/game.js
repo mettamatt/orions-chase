@@ -293,8 +293,10 @@ class State {
   reset() {
     this.highScore = loadHighScore();
     this.gameState = GAME_STATES.INITIAL;
-    this.playerY = 0; // Vertical position
-    this.obstacleX = CONFIG.GAME.CONTAINER_WIDTH;
+    this.playerY = 0; // Vertical position of player
+    this.orionY = 0; // Vertical position of Orion
+    this.obstacleX = CONFIG.GAME.CONTAINER_WIDTH + CONFIG.OBSTACLE.WIDTH + 100; // Ensure obstacle starts off-screen
+    this.collisionDisabledUntil = performance.now() + 500; // Add grace period
     this.isJumping = false;
     this.jumpStartTime = 0;
     this.currentSpeed = CONFIG.GAME.STARTING_SPEED;
@@ -593,6 +595,7 @@ const startGame = () => {
 const resetGame = () => {
   GameLoop.cancel();
   state.reset();
+  resetPositions();
   UI.updateGameUI(false);
   elements.instructionDialog.style.display = 'block';
   elements.gameOverMessage.classList.add('hidden');
@@ -602,6 +605,25 @@ const resetGame = () => {
   elements.orion.classList.remove('running');
   elements.gameContainer.classList.remove('parallax'); // Stop background animation
   log('Game reset.', LOG_LEVELS.INFO);
+};
+
+/**
+ * Resets the positions of the player, Orion, and the obstacle.
+ */
+const resetPositions = () => {
+  // Reset obstacle position
+  elements.obstacle.style.left = `${state.obstacleX}px`;
+
+  // Reset obstacle bottom position
+  const playerCenterY = CONFIG.GAME.GROUND_LEVEL + CONFIG.PLAYER.HEIGHT / 2.5;
+  const obstacleBottom = playerCenterY - CONFIG.OBSTACLE.HEIGHT;
+  elements.obstacle.style.bottom = `${obstacleBottom}px`;
+
+  // Reset player position
+  elements.player.style.transform = `translateY(0)`;
+
+  // Reset Orion's position
+  elements.orion.style.transform = `translateY(0)`;
 };
 
 /**
@@ -766,9 +788,9 @@ class GameLoopClass {
     }
 
     // Calculate Player's center Y position
-    const playerCenterY = CONFIG.GAME.GROUND_LEVEL + CONFIG.PLAYER.HEIGHT / 2;
+    const playerCenterY = CONFIG.GAME.GROUND_LEVEL + CONFIG.PLAYER.HEIGHT / 2.5;
     // Calculate Obstacle's bottom to align centers
-    const obstacleBottom = playerCenterY - CONFIG.OBSTACLE.HEIGHT / 2;
+    const obstacleBottom = playerCenterY - CONFIG.OBSTACLE.HEIGHT;
     elements.obstacle.style.bottom = `${obstacleBottom}px`;
 
     elements.obstacle.style.left = `${state.obstacleX}px`; // Use only 'left' for horizontal positioning
@@ -801,14 +823,15 @@ class GameLoopClass {
    * Updates Orion's position using transform.
    */
   updateOrionPosition() {
-    const timeSinceGameStart = performance.now() - state.gameStartTime;
-    const jumpDurationSeconds = CONFIG.JUMP.DURATION / 1000;
-    const jumpInterval = (state.currentSpeed * jumpDurationSeconds * 2) / 1000; // Adjust as needed
+    const orionX = CONFIG.ORION.INITIAL_LEFT;
+    const distanceToObstacle = state.obstacleX - orionX;
 
-    if (!state.orionIsJumping && timeSinceGameStart >= jumpInterval * 1000) {
+    // Set a threshold for when Orion should jump
+    const jumpThreshold = 200; // Adjust this value as needed
+
+    if (!state.orionIsJumping && distanceToObstacle <= jumpThreshold) {
       state.orionIsJumping = true;
       state.orionJumpStartTime = performance.now();
-      state.gameStartTime = performance.now(); // Reset game start time for next jump
     }
 
     if (state.orionIsJumping) {
@@ -884,6 +907,10 @@ const GameLoop = new GameLoopClass();
  * @returns {boolean} True if a collision is detected, false otherwise.
  */
 const checkCollision = () => {
+  if (performance.now() < state.collisionDisabledUntil) {
+    return false; // Skip collision detection during the grace period
+  }
+
   const playerRect = elements.player.getBoundingClientRect();
   const obstacleRect = elements.obstacle.getBoundingClientRect();
 
