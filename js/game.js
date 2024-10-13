@@ -246,8 +246,8 @@ const CONFIG = {
     INITIAL_LEFT: window.innerWidth,
   },
   GAME: {
-    STARTING_SPEED: 200, // pixels per second
-    MAX_SPEED: 600, // pixels per second
+    STARTING_SPEED: 400, // pixels per second
+    MAX_SPEED: 800, // pixels per second
     ACCELERATION: 10, // pixels per second squared
     GROUND_LEVEL: parseCSSValue(CSS_VARS.groundLevel),
     CONTAINER_WIDTH: window.innerWidth,
@@ -822,14 +822,22 @@ class GameLoopClass {
   /**
    * Updates Orion's position using transform.
    */
+  /**
+   * Updates Orion's position using transform.
+   */
   updateOrionPosition() {
     const orionX = CONFIG.ORION.INITIAL_LEFT;
-    const distanceToObstacle = state.obstacleX - orionX;
+    const obstacleX = state.obstacleX;
+    const obstacleSpeed = state.currentSpeed;
 
-    // Set a threshold for when Orion should jump
-    const jumpThreshold = 200; // Adjust this value as needed
+    // Calculate the time for the obstacle to reach Orion
+    const timeToReachOrion = (obstacleX - orionX) / obstacleSpeed;
 
-    if (!state.orionIsJumping && distanceToObstacle <= jumpThreshold) {
+    // Time for Orion to reach the peak of his jump
+    const timeToJumpPeak = CONFIG.JUMP.DURATION / 2 / 1000; // in seconds
+
+    // Check if it's time for Orion to start jumping
+    if (!state.orionIsJumping && timeToReachOrion <= timeToJumpPeak) {
       state.orionIsJumping = true;
       state.orionJumpStartTime = performance.now();
     }
@@ -903,7 +911,31 @@ class GameLoopClass {
 const GameLoop = new GameLoopClass();
 
 /**
- * Checks for collisions between the player and obstacle.
+ * Calculates an adjusted bounding box for more accurate collision detection.
+ * @param {HTMLElement} element - The DOM element to get the bounding box from.
+ * @param {number} reductionFactor - The factor by which to reduce the bounding box (0 to 1).
+ * @returns {DOMRect} The adjusted bounding box.
+ */
+const getAdjustedBoundingBox = (element, reductionFactor) => {
+  const rect = element.getBoundingClientRect();
+
+  // Calculate the amount to reduce from each side
+  const widthReduction = rect.width * reductionFactor;
+  const heightReduction = rect.height * reductionFactor;
+
+  // Create a new bounding box centered within the original
+  return {
+    left: rect.left + widthReduction / 2,
+    top: rect.top + heightReduction / 2,
+    right: rect.right - widthReduction / 2,
+    bottom: rect.bottom - heightReduction / 2,
+    width: rect.width - widthReduction,
+    height: rect.height - heightReduction,
+  };
+};
+
+/**
+ * Checks for collisions between the player and obstacle using adjusted bounding boxes.
  * @returns {boolean} True if a collision is detected, false otherwise.
  */
 const checkCollision = () => {
@@ -911,9 +943,21 @@ const checkCollision = () => {
     return false; // Skip collision detection during the grace period
   }
 
-  const playerRect = elements.player.getBoundingClientRect();
-  const obstacleRect = elements.obstacle.getBoundingClientRect();
+  // Define reduction factors for player and obstacle
+  const playerReductionFactor = 0.4; // Adjust this value as needed
+  const obstacleReductionFactor = 0.2; // Adjust this value as needed
 
+  // Get adjusted bounding boxes
+  const playerRect = getAdjustedBoundingBox(
+    elements.player,
+    playerReductionFactor
+  );
+  const obstacleRect = getAdjustedBoundingBox(
+    elements.obstacle,
+    obstacleReductionFactor
+  );
+
+  // Check for collision
   const collision =
     playerRect.right > obstacleRect.left &&
     playerRect.left < obstacleRect.right &&

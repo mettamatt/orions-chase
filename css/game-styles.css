@@ -7,6 +7,18 @@
   --background-speed: 60s; /* Sky moves slowly */
   --ground-speed: 20s;
 
+  /* Background image widths */
+  --sky-image-width: 800px;
+  --ground-image-width: 800px;
+
+  /* Sky movement speed and duration */
+  --sky-move-speed: 50px; /* Sky moves at 50px/s */
+  --sky-move-duration: 16s;
+
+  /* Ground movement speed and duration */
+  --ground-move-speed: 200px; /* Ground moves at 200px/s */
+  --ground-move-duration: 8s;
+
   /* Player variables */
   --player-width: 201px;
   --player-height: 308px;
@@ -30,11 +42,11 @@
   /* Game variables */
   --ground-level: 100px; /* Adjust based on ground.svg height */
   --game-speed: 200px / s; /* Not directly used in CSS */
-  --fps: 60; /* Updated to 60 for smoother animations */
+  --fps: 30;
 
   /* Jump variables */
   --jump-height: 23vh;
-  --jump-duration: 800ms;
+  --jump-duration: 1200ms;
 
   /* Animation durations */
   --player-animation-duration: calc(var(--player-frames) / var(--fps) * 1s);
@@ -65,67 +77,76 @@ html {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  /* Removed background properties */
 }
 
-/* Sky Background Layer */
+/* Sky Background Container */
 .sky-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(
-    100% - var(--ground-level)
-  ); /* Fill the space above the ground */
-  background-image: url('../assets/sky.svg');
-  background-repeat: repeat-x;
-  background-size: auto 100%; /* Maintain height, prevent horizontal stretching */
-  background-position: bottom center;
-  z-index: -3; /* Behind everything else */
+  height: calc(100% - var(--ground-level));
+  overflow: hidden;
+  z-index: -3;
 }
 
-/* Ground Layer */
+/* Sky Background Image */
+.sky-background-image {
+  width: 200%; /* Double the container width */
+  height: 100%;
+  background-image: url('../assets/sky.svg');
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+}
+
+/* Ground Background Container */
 .ground {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: calc(var(--ground-level) * 3);
+  overflow: hidden;
+  z-index: -2;
+}
+
+/* Ground Background Image */
+.ground-background-image {
+  width: 200%;
+  height: 100%;
   background-image: url('../assets/ground.svg');
+  background-size: 50% 100%; /* Adjusted */
   background-repeat: repeat-x;
-  background-size: cover; /* Assuming ground.svg tiles seamlessly */
-  background-position: bottom center;
-  z-index: -2; /* Above the sky but behind game elements */
 }
 
 /* Animation Keyframes */
 
 /* Start background animations when parallax is active */
-.game-container.parallax .sky-background {
-  animation: move-sky var(--background-speed) linear infinite;
+.game-container.parallax .sky-background-image {
+  animation: move-sky var(--sky-move-duration) linear infinite;
 }
 
-.game-container.parallax .ground {
-  animation: move-ground var(--ground-speed) linear infinite;
+.game-container.parallax .ground-background-image {
+  animation: move-ground var(--ground-move-duration) linear infinite;
 }
 
-/* Sky background animation */
+/* Sky Animation */
 @keyframes move-sky {
   from {
-    background-position: 0 0;
+    transform: translateX(0);
   }
   to {
-    background-position: -50% 0; /* Sky moves slower for parallax effect */
+    transform: translateX(-50%); /* Move left by half of its width */
   }
 }
 
-/* Ground animation */
+/* Ground Animation */
 @keyframes move-ground {
   from {
-    background-position: 0 0;
+    transform: translateX(0);
   }
   to {
-    background-position: -100% 0; /* Ground moves faster */
+    transform: translateX(-50%); /* Move left by half of its width */
   }
 }
 
