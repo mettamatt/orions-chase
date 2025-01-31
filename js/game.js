@@ -30,30 +30,16 @@ const LOG_LEVELS = {
 
 const assets = { images: {}, audio: {} };
 
-/**
- * Logs a message with a specified log level.
- * @param {string} message - The message to log.
- * @param {keyof LOG_LEVELS} [level=LOG_LEVELS.INFO] - The log level.
- */
 const log = (message, level = LOG_LEVELS.INFO) => {
   const timestamp = new Date().toISOString();
   const logMethod = console[level] || console.log;
   logMethod(`[${timestamp}] ${level.toUpperCase()}: ${message}`);
 };
 
-/**
- * Logs an error message.
- * @param {Error} error - The error to log.
- */
 const logError = (error) => {
   log(`Error: ${error.message}`, LOG_LEVELS.ERROR);
 };
 
-/**
- * Preloads all assets (images and audio).
- * @param {Object} assetList - The list of assets to preload.
- * @returns {Promise<void>} Resolves when all assets are loaded.
- */
 const preloadAssets = async (assetList) => {
   try {
     const imagePromises = assetList.images.map(
@@ -91,18 +77,8 @@ const preloadAssets = async (assetList) => {
   }
 };
 
-/**
- * Retrieves a preloaded asset.
- * @param {'images'|'audio'} type - The type of the asset.
- * @param {string} src - The source URL of the asset.
- * @returns {HTMLImageElement|HTMLAudioElement} The preloaded asset.
- */
 const getAsset = (type, src) => assets[type][src];
 
-/**
- * Saves the high score to local storage.
- * @param {number} score - The high score to save.
- */
 const saveHighScore = (score) => {
   try {
     localStorage.setItem('highScore', score.toString());
@@ -112,10 +88,6 @@ const saveHighScore = (score) => {
   }
 };
 
-/**
- * Loads the high score from local storage.
- * @returns {number} The high score.
- */
 const loadHighScore = () => {
   try {
     const storedScore = parseInt(localStorage.getItem('highScore'), 10);
@@ -128,14 +100,6 @@ const loadHighScore = () => {
   }
 };
 
-/**
- * Calculates the jump position based on the jump start time and current time.
- * @param {number} jumpStartTime - The time the jump started.
- * @param {number} currentTime - The current time.
- * @param {number} duration - Jump duration in milliseconds.
- * @param {number} maxHeight - Maximum jump height.
- * @returns {Object} An object with jump height and jump completion status.
- */
 const calculateJumpPosition = (
   jumpStartTime,
   currentTime,
@@ -159,21 +123,11 @@ const calculateJumpPosition = (
   };
 };
 
-/**
- * Retrieves the value of a CSS variable.
- * @param {string} variableName - The name of the CSS variable.
- * @returns {string} The value of the CSS variable.
- */
 const getCSSVariable = (variableName) =>
   getComputedStyle(document.documentElement)
     .getPropertyValue(variableName)
     .trim();
 
-/**
- * Converts a CSS time value to milliseconds.
- * @param {string} cssTime - The CSS time value.
- * @returns {number} The time in milliseconds.
- */
 const cssTimeToMs = (cssTime) => {
   if (cssTime.endsWith('ms')) {
     return parseFloat(cssTime);
@@ -183,11 +137,6 @@ const cssTimeToMs = (cssTime) => {
   return parseFloat(cssTime);
 };
 
-/**
- * Parses a CSS size value and converts it to pixels.
- * @param {string} value - The CSS size value.
- * @returns {number} The size in pixels.
- */
 const parseCSSValue = (value) => {
   value = value.trim();
   if (value.endsWith('px')) {
@@ -197,7 +146,6 @@ const parseCSSValue = (value) => {
   } else if (value.endsWith('vh')) {
     return (parseFloat(value) / 100) * window.innerHeight;
   } else if (value.endsWith('%')) {
-    // Handle percentages if necessary
     return parseFloat(value);
   } else {
     log(`Unsupported CSS unit in value: ${value}`, LOG_LEVELS.WARN);
@@ -260,11 +208,12 @@ const CONFIG = {
     DURATION: cssTimeToMs(CSS_VARS.jumpDuration),
   },
   SCORING: {
-    POINTS_PER_SECOND: 1, // Points per second of survival
+    POINTS_PER_SECOND: 1,
     OBSTACLE_BONUS: 100,
   },
   BACKGROUND: {
-    INITIAL_DURATION: 20, // Initial duration in seconds
+    INITIAL_DURATION_SKY: 16, // default sky animation duration
+    INITIAL_DURATION_GROUND: 8, // default ground animation duration
   },
   FPS: parseFloat(CSS_VARS.fps) || 60,
   GAME_LOOP: {
@@ -279,24 +228,18 @@ const CONFIG = {
 
 const elements = {};
 
-/**
- * Represents the game state.
- */
 class State {
   constructor() {
     this.reset();
   }
 
-  /**
-   * Resets the game state to its initial values.
-   */
   reset() {
     this.highScore = loadHighScore();
     this.gameState = GAME_STATES.INITIAL;
-    this.playerY = 0; // Vertical position of player
-    this.orionY = 0; // Vertical position of Orion
-    this.obstacleX = CONFIG.GAME.CONTAINER_WIDTH + CONFIG.OBSTACLE.WIDTH + 100; // Ensure obstacle starts off-screen
-    this.collisionDisabledUntil = performance.now() + 500; // Add grace period
+    this.playerY = 0;
+    this.orionY = 0;
+    this.obstacleX = CONFIG.GAME.CONTAINER_WIDTH + CONFIG.OBSTACLE.WIDTH + 100;
+    this.collisionDisabledUntil = performance.now() + 500; // grace period
     this.isJumping = false;
     this.jumpStartTime = 0;
     this.currentSpeed = CONFIG.GAME.STARTING_SPEED;
@@ -316,10 +259,6 @@ const state = new State();
 // DOM Initialization
 // ----------------------------------------
 
-/**
- * Initializes DOM elements by assigning them to the elements object.
- * @throws {Error} If a required DOM element is not found.
- */
 const initDOMElements = () => {
   const elementIdToKey = {
     player: 'player',
@@ -344,16 +283,11 @@ const initDOMElements = () => {
     elements[key] = element;
   });
 
-  // Initialize obstacle position
   elements.obstacle.style.left = `${CONFIG.OBSTACLE.INITIAL_LEFT}px`;
-  // Obstacle's bottom is dynamically set in updateObstaclePosition
-
-  // Ensure bottom positions are set via CSS
   elements.player.style.bottom = 'var(--ground-level)';
   elements.orion.style.bottom = 'var(--ground-level)';
-  elements.ground.style.bottom = '0'; // Ground is already positioned at bottom
+  elements.ground.style.bottom = '0';
 
-  // Remove any vertical translations
   elements.player.style.transform = 'translateY(0)';
   elements.orion.style.transform = 'translateY(0)';
 
@@ -365,53 +299,38 @@ const initDOMElements = () => {
 // ----------------------------------------
 
 const UI = {
-  /**
-   * Updates the game score display.
-   * @param {number} score - The current score.
-   */
   updateScoreDisplay(score) {
     elements.score.textContent = `Score: ${score}`;
   },
 
-  /**
-   * Updates the end game UI with the final score and high score.
-   * @param {number} finalScore - The final score achieved.
-   */
   updateEndGame(finalScore) {
     elements.finalScore.textContent = `${finalScore}`;
     elements.highScore.textContent = `High Score: ${state.highScore}`;
     elements.gameOverMessage.classList.remove('hidden');
     elements.instructionDialog.style.display = 'block';
-    elements.gameContainer.classList.remove('parallax'); // Stop background
+    elements.gameContainer.classList.remove('parallax');
   },
 
-  /**
-   * Updates the initial UI before the game starts.
-   */
   updateInitial() {
     elements.highScore.textContent = `High Score: ${state.highScore}`;
     elements.gameOverMessage.classList.add('hidden');
     elements.instructionDialog.style.display = 'block';
-    elements.gameContainer.classList.remove('parallax'); // Ensure background is stopped
+    elements.gameContainer.classList.remove('parallax');
   },
 
-  /**
-   * Updates the game UI based on the playing state.
-   * @param {boolean} isPlaying - Indicates whether the game is currently being played.
-   */
   updateGameUI(isPlaying) {
-    // Apply vertical translation only
+    // Only apply vertical translation
     elements.player.style.transform = `translateY(-${state.playerY}px)`;
     elements.orion.style.transform = `translateY(-${state.orionY}px)`;
-    elements.obstacle.style.display = isPlaying ? 'block' : 'none';
 
+    elements.obstacle.style.display = isPlaying ? 'block' : 'none';
     elements.gameOverMessage.style.display = 'none';
     elements.instructionDialog.style.display = isPlaying ? 'none' : 'block';
     elements.player.style.animationPlayState = isPlaying ? 'running' : 'paused';
     elements.orion.style.animationPlayState = isPlaying ? 'running' : 'paused';
     UI.updateScoreDisplay(isPlaying ? 0 : state.score);
     elements.highScore.textContent = `High Score: ${state.highScore}`;
-    elements.gameContainer.classList.toggle('parallax', isPlaying); // Start or stop background
+    elements.gameContainer.classList.toggle('parallax', isPlaying);
   },
 };
 
@@ -421,17 +340,12 @@ const UI = {
 
 const assetToElementMap = {
   'player_sprite_sheet.png': 'player',
-  // 'player-jump_sprite_sheet.png': 'player', // Already handled separately
   'orion_sprite_sheet.png': 'orion',
   'obstacle.png': 'obstacle',
   'sky.svg': 'skyBackground',
   'ground.svg': 'ground',
 };
 
-/**
- * Sets up the game visuals by applying background images to elements.
- * @param {Object} assetList - The list of assets to set up.
- */
 const setupGameVisuals = (assetList) => {
   assetList.images.forEach((asset) => {
     const assetName = asset.substring(asset.lastIndexOf('/') + 1);
@@ -443,11 +357,10 @@ const setupGameVisuals = (assetList) => {
     const element = elements[elementKey];
     const image = getAsset('images', asset);
     if (element && image) {
-      // Skip setting background-image for the player element
+      // Skip setting background-image for player (handled by CSS)
       if (['orion_sprite_sheet.png', 'obstacle.png'].includes(assetName)) {
         element.style.backgroundImage = `url(${image.src})`;
       }
-      // Background images for the player are handled via CSS classes
     } else {
       log(`Failed to set background image for ${elementKey}`, LOG_LEVELS.WARN);
     }
@@ -455,10 +368,6 @@ const setupGameVisuals = (assetList) => {
   log('Game visuals set up.', LOG_LEVELS.INFO);
 };
 
-/**
- * Preloads the jump sprite sheet separately to avoid initial loading.
- * @returns {Promise<void>} Resolves when the jump sprite sheet is loaded.
- */
 const preloadJumpSprite = () => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -488,21 +397,17 @@ const keyActions = {
     ),
 };
 
-/**
- * Handles the keydown event.
- * @param {KeyboardEvent} e - The keyboard event.
- */
 const handleKeydown = (e) => {
   try {
     if (e.code === 'Space' && state.gameState === GAME_STATES.INITIAL) {
-      e.preventDefault(); // Prevent default behavior like page scrolling
+      e.preventDefault();
       keyActions.Space();
       return;
     }
 
     const action = keyActions[e.code];
     if (action) {
-      e.preventDefault(); // Prevent default behavior like page scrolling
+      e.preventDefault();
       action();
     }
   } catch (error) {
@@ -510,9 +415,6 @@ const handleKeydown = (e) => {
   }
 };
 
-/**
- * Handles the touchstart event.
- */
 const handleTouchStart = () => {
   if (state.gameState === GAME_STATES.PLAYING) {
     handleStateTransition(ACTIONS.JUMP);
@@ -523,9 +425,6 @@ const handleTouchStart = () => {
   }
 };
 
-/**
- * Sets up event listeners for keydown and touchstart events.
- */
 const setupEventListeners = () => {
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('touchstart', handleTouchStart);
@@ -536,10 +435,6 @@ const setupEventListeners = () => {
 // State Transition Handling
 // ----------------------------------------
 
-/**
- * Handles state transitions based on actions.
- * @param {string} action - The action to handle.
- */
 const handleStateTransition = (action) => {
   log(`Handling ${action} in state: ${state.gameState}`, LOG_LEVELS.INFO);
   switch (state.gameState) {
@@ -571,9 +466,6 @@ const handleStateTransition = (action) => {
 // Game Control Functions
 // ----------------------------------------
 
-/**
- * Starts the game.
- */
 const startGame = () => {
   state.lastFrameTime = performance.now();
   state.gameState = GAME_STATES.PLAYING;
@@ -583,15 +475,12 @@ const startGame = () => {
   elements.player.classList.add('running');
   elements.orion.classList.add('running');
   elements.obstacle.style.display = 'block';
-  elements.gameContainer.classList.add('parallax'); // Start background animation
+  elements.gameContainer.classList.add('parallax');
   state.gameStartTime = performance.now();
   state.lastSpeedIncrementTime = performance.now();
   log('Game started.', LOG_LEVELS.INFO);
 };
 
-/**
- * Resets the game.
- */
 const resetGame = () => {
   GameLoop.cancel();
   state.reset();
@@ -603,32 +492,20 @@ const resetGame = () => {
   elements.player.classList.remove('jumping');
   elements.player.classList.remove('running');
   elements.orion.classList.remove('running');
-  elements.gameContainer.classList.remove('parallax'); // Stop background animation
+  elements.gameContainer.classList.remove('parallax');
   log('Game reset.', LOG_LEVELS.INFO);
 };
 
-/**
- * Resets the positions of the player, Orion, and the obstacle.
- */
 const resetPositions = () => {
-  // Reset obstacle position
   elements.obstacle.style.left = `${state.obstacleX}px`;
-
-  // Reset obstacle bottom position
   const playerCenterY = CONFIG.GAME.GROUND_LEVEL + CONFIG.PLAYER.HEIGHT / 2.5;
   const obstacleBottom = playerCenterY - CONFIG.OBSTACLE.HEIGHT;
   elements.obstacle.style.bottom = `${obstacleBottom}px`;
 
-  // Reset player position
   elements.player.style.transform = `translateY(0)`;
-
-  // Reset Orion's position
   elements.orion.style.transform = `translateY(0)`;
 };
 
-/**
- * Ends the game.
- */
 const endGame = () => {
   GameLoop.cancel();
   state.gameState = GAME_STATES.CRASHED;
@@ -644,12 +521,9 @@ const endGame = () => {
 
   UI.updateEndGame(finalScore);
   log(`Game ended. Final score: ${finalScore}`, LOG_LEVELS.INFO);
-  elements.gameContainer.classList.remove('parallax'); // Stop background animation
+  elements.gameContainer.classList.remove('parallax');
 };
 
-/**
- * Handles the player's jump action.
- */
 const handleJump = () => {
   if (!state.isJumping) {
     state.isJumping = true;
@@ -660,30 +534,24 @@ const handleJump = () => {
   }
 };
 
-/**
- * Pauses the game.
- */
 const pauseGame = () => {
   if (state.gameState === GAME_STATES.PLAYING) {
     GameLoop.cancel();
     state.gameState = GAME_STATES.PAUSED;
     elements.player.style.animationPlayState = 'paused';
     elements.orion.style.animationPlayState = 'paused';
-    elements.gameContainer.classList.remove('parallax'); // Stop background animation
+    elements.gameContainer.classList.remove('parallax');
     log('Game paused.', LOG_LEVELS.INFO);
   }
 };
 
-/**
- * Resumes the game.
- */
 const resumeGame = () => {
   if (state.gameState === GAME_STATES.PAUSED) {
     state.lastFrameTime = performance.now();
     state.gameState = GAME_STATES.PLAYING;
     elements.player.style.animationPlayState = 'running';
     elements.orion.style.animationPlayState = 'running';
-    elements.gameContainer.classList.add('parallax'); // Start background animation
+    elements.gameContainer.classList.add('parallax');
     GameLoop.start();
     log('Game resumed.', LOG_LEVELS.INFO);
   }
@@ -704,9 +572,6 @@ class GameLoopClass {
       CONFIG.GAME_LOOP.EMPIRICAL_ADJUSTMENT_FACTOR;
   }
 
-  /**
-   * Starts the game loop.
-   */
   start() {
     cancelAnimationFrame(this.animationFrameId);
     this.lastTime = performance.now();
@@ -715,18 +580,11 @@ class GameLoopClass {
     log('Game loop started.', LOG_LEVELS.INFO);
   }
 
-  /**
-   * Cancels the game loop.
-   */
   cancel() {
     cancelAnimationFrame(this.animationFrameId);
     log('Game loop canceled.', LOG_LEVELS.INFO);
   }
 
-  /**
-   * The main update loop.
-   * @param {number} currentTime - The current time.
-   */
   update(currentTime) {
     if (state.gameState !== GAME_STATES.PLAYING) {
       this.animationFrameId = requestAnimationFrame(this.update.bind(this));
@@ -764,41 +622,26 @@ class GameLoopClass {
     this.animationFrameId = requestAnimationFrame(this.update.bind(this));
   }
 
-  /**
-   * Updates all game objects.
-   * @param {number} deltaTime - The time difference between frames in seconds.
-   */
   updateGameObjects(deltaTime) {
     this.updateObstaclePosition(deltaTime);
     this.updatePlayerPosition();
     this.updateOrionPosition();
-    // No need to handle background position here as CSS manages it
   }
 
-  /**
-   * Updates the obstacle position.
-   * @param {number} deltaTime - The time difference between frames in seconds.
-   */
   updateObstaclePosition(deltaTime) {
     state.obstacleX -= state.currentSpeed * deltaTime;
     if (state.obstacleX <= -CONFIG.OBSTACLE.WIDTH) {
       state.obstacleX = CONFIG.GAME.CONTAINER_WIDTH;
-      state.score += CONFIG.SCORING.OBSTACLE_BONUS; // Bonus for passing obstacle
+      state.score += CONFIG.SCORING.OBSTACLE_BONUS;
       UI.updateScoreDisplay(state.score);
     }
 
-    // Calculate Player's center Y position
     const playerCenterY = CONFIG.GAME.GROUND_LEVEL + CONFIG.PLAYER.HEIGHT / 2.5;
-    // Calculate Obstacle's bottom to align centers
     const obstacleBottom = playerCenterY - CONFIG.OBSTACLE.HEIGHT;
     elements.obstacle.style.bottom = `${obstacleBottom}px`;
-
-    elements.obstacle.style.left = `${state.obstacleX}px`; // Use only 'left' for horizontal positioning
+    elements.obstacle.style.left = `${state.obstacleX}px`;
   }
 
-  /**
-   * Updates the player position using transform.
-   */
   updatePlayerPosition() {
     if (state.isJumping) {
       const { jumpY, isJumpFinished } = calculateJumpPosition(
@@ -819,24 +662,16 @@ class GameLoopClass {
     elements.player.style.transform = `translateY(-${state.playerY}px)`;
   }
 
-  /**
-   * Updates Orion's position using transform.
-   */
-  /**
-   * Updates Orion's position using transform.
-   */
   updateOrionPosition() {
     const orionX = CONFIG.ORION.INITIAL_LEFT;
     const obstacleX = state.obstacleX;
     const obstacleSpeed = state.currentSpeed;
 
-    // Calculate the time for the obstacle to reach Orion
+    // Time for obstacle to collide (if same Y) with Orion
     const timeToReachOrion = (obstacleX - orionX) / obstacleSpeed;
+    const timeToJumpPeak = CONFIG.JUMP.DURATION / 2 / 1000;
 
-    // Time for Orion to reach the peak of his jump
-    const timeToJumpPeak = CONFIG.JUMP.DURATION / 2 / 1000; // in seconds
-
-    // Check if it's time for Orion to start jumping
+    // If obstacle is approaching Orion, make Orion jump
     if (!state.orionIsJumping && timeToReachOrion <= timeToJumpPeak) {
       state.orionIsJumping = true;
       state.orionJumpStartTime = performance.now();
@@ -860,10 +695,6 @@ class GameLoopClass {
     elements.orion.style.transform = `translateY(-${state.orionY}px)`;
   }
 
-  /**
-   * Updates the game score based on survival time.
-   * @param {number} currentTime - The current time.
-   */
   updateScore(currentTime) {
     const deltaTime = (currentTime - state.lastFrameTime) / 1000;
     state.distanceRan += state.currentSpeed * deltaTime;
@@ -874,10 +705,6 @@ class GameLoopClass {
     state.lastFrameTime = currentTime;
   }
 
-  /**
-   * Checks if it's time to increase the game speed and updates it.
-   * @param {number} currentTime - The current time.
-   */
   checkAndIncreaseSpeed(currentTime) {
     if (
       currentTime - state.lastSpeedIncrementTime >=
@@ -887,43 +714,42 @@ class GameLoopClass {
         state.currentSpeed + CONFIG.GAME.SPEED_INCREMENT_AMOUNT,
         CONFIG.GAME.MAX_SPEED
       );
-      // Update CSS variable for background speed
-      const newGameSpeed =
-        CONFIG.BACKGROUND.INITIAL_DURATION /
-        (state.currentSpeed / CONFIG.GAME.STARTING_SPEED);
+
+      // Dynamically adjust background animation durations
+      // so the sky/ground moves faster in sync with currentSpeed
+      const speedRatio = CONFIG.GAME.STARTING_SPEED / state.currentSpeed;
+
+      // Sky originally moves in 16s, ground in 8s
+      const newSkyDuration =
+        CONFIG.BACKGROUND.INITIAL_DURATION_SKY * speedRatio;
+      const newGroundDuration =
+        CONFIG.BACKGROUND.INITIAL_DURATION_GROUND * speedRatio;
+
       document.documentElement.style.setProperty(
-        '--background-speed',
-        `${newGameSpeed}s`
+        '--sky-move-duration',
+        `${newSkyDuration}s`
       );
+      document.documentElement.style.setProperty(
+        '--ground-move-duration',
+        `${newGroundDuration}s`
+      );
+
       state.lastSpeedIncrementTime = currentTime;
       log(`Game speed increased to ${state.currentSpeed}px/s`, LOG_LEVELS.INFO);
     }
   }
 
-  /**
-   * Updates the game visuals.
-   */
   updateVisuals() {
-    // Additional visual updates can be handled here if necessary
+    // Additional visual updates can be placed here if needed
   }
 }
 
 const GameLoop = new GameLoopClass();
 
-/**
- * Calculates an adjusted bounding box for more accurate collision detection.
- * @param {HTMLElement} element - The DOM element to get the bounding box from.
- * @param {number} reductionFactor - The factor by which to reduce the bounding box (0 to 1).
- * @returns {DOMRect} The adjusted bounding box.
- */
 const getAdjustedBoundingBox = (element, reductionFactor) => {
   const rect = element.getBoundingClientRect();
-
-  // Calculate the amount to reduce from each side
   const widthReduction = rect.width * reductionFactor;
   const heightReduction = rect.height * reductionFactor;
-
-  // Create a new bounding box centered within the original
   return {
     left: rect.left + widthReduction / 2,
     top: rect.top + heightReduction / 2,
@@ -934,20 +760,14 @@ const getAdjustedBoundingBox = (element, reductionFactor) => {
   };
 };
 
-/**
- * Checks for collisions between the player and obstacle using adjusted bounding boxes.
- * @returns {boolean} True if a collision is detected, false otherwise.
- */
 const checkCollision = () => {
   if (performance.now() < state.collisionDisabledUntil) {
-    return false; // Skip collision detection during the grace period
+    return false;
   }
 
-  // Define reduction factors for player and obstacle
-  const playerReductionFactor = 0.4; // Adjust this value as needed
-  const obstacleReductionFactor = 0.2; // Adjust this value as needed
+  const playerReductionFactor = 0.4;
+  const obstacleReductionFactor = 0.2;
 
-  // Get adjusted bounding boxes
   const playerRect = getAdjustedBoundingBox(
     elements.player,
     playerReductionFactor
@@ -957,7 +777,6 @@ const checkCollision = () => {
     obstacleReductionFactor
   );
 
-  // Check for collision
   const collision =
     playerRect.right > obstacleRect.left &&
     playerRect.left < obstacleRect.right &&
@@ -978,23 +797,18 @@ const checkCollision = () => {
 const assetList = {
   images: [
     'assets/player_sprite_sheet.png',
-    // 'assets/player-jump_sprite_sheet.png', // Removed from initial mapping
     'assets/orion_sprite_sheet.png',
     'assets/obstacle.png',
     'assets/sky.svg',
     'assets/ground.svg',
   ],
-  audio: [], // Add audio asset paths if any
+  audio: [],
 };
 
-/**
- * Initializes the game by preloading assets, setting up DOM elements,
- * event listeners, and game visuals, and updating the UI.
- */
 const initializeGame = async () => {
   try {
     await preloadAssets(assetList);
-    await preloadJumpSprite(); // Preload jump sprite separately
+    await preloadJumpSprite();
     initDOMElements();
     setupEventListeners();
     setupGameVisuals(assetList);
@@ -1005,13 +819,7 @@ const initializeGame = async () => {
   }
 };
 
-/**
- * Initializes the game once the DOM is fully loaded.
- */
 document.addEventListener('DOMContentLoaded', initializeGame);
 
-// ----------------------------------------
-// Exported Members (if needed elsewhere)
-// ----------------------------------------
-
+// Export if needed
 export { CONFIG, GAME_STATES, elements, state, UI, initializeGame, GameLoop };

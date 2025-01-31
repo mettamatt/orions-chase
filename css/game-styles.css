@@ -1,66 +1,44 @@
 /* css/game-styles.css */
 
-/* Root variables */
 :root {
-  /* Background variables */
-  --background-repeat: repeat-x; /* Repeat horizontally */
-  --background-speed: 60s; /* Sky moves slowly */
-  --ground-speed: 20s;
+  --background-repeat: repeat-x;
+  /* The sky/ground durations now change via JS. */
+  --sky-move-duration: 16s; /* default initial */
+  --ground-move-duration: 8s; /* default initial */
 
-  /* Background image widths */
-  --sky-image-width: 800px;
-  --ground-image-width: 800px;
-
-  /* Sky movement speed and duration */
-  --sky-move-speed: 50px; /* Sky moves at 50px/s */
-  --sky-move-duration: 16s;
-
-  /* Ground movement speed and duration */
-  --ground-move-speed: 200px; /* Ground moves at 200px/s */
-  --ground-move-duration: 8s;
-
-  /* Player variables */
+  /* Other variables remain the same */
   --player-width: 201px;
   --player-height: 308px;
   --player-frames: 16;
-  --player-left: 35vw; /* Adjusted to 35% of viewport width */
+  --player-left: 35vw;
   --player-jump-width: 236px;
   --player-jump-height: 362px;
   --player-jump-frames: 8;
 
-  /* Orion variables */
   --orion-width: 187px;
   --orion-height: 103px;
   --orion-frames: 8;
-  --orion-left: 5vw; /* Position Orion at 5% of viewport width */
+  --orion-left: 5vw;
 
-  /* Obstacle variables */
   --obstacle-width: 71px;
   --obstacle-height: 45px;
-  --obstacle-initial-left: 100vw;
 
-  /* Game variables */
-  --ground-level: 100px; /* Adjust based on ground.svg height */
-  --game-speed: 200px / s; /* Not directly used in CSS */
+  --ground-level: 100px;
   --fps: 30;
 
-  /* Jump variables */
   --jump-height: 23vh;
   --jump-duration: 1200ms;
 
-  /* Animation durations */
   --player-animation-duration: calc(var(--player-frames) / var(--fps) * 1s);
   --player-jump-animation-duration: var(--jump-duration);
   --orion-animation-duration: calc(var(--orion-frames) / var(--fps) * 1s);
 
-  /* UI variables */
   --dialog-background: rgba(255, 255, 255, 0.9);
   --dialog-border-color: #000;
   --dialog-font-size: 3vh;
   --score-font-size: 3vh;
 }
 
-/* Global styles to reset default browser styling */
 body,
 html {
   margin: 0;
@@ -69,9 +47,6 @@ html {
   overflow: hidden;
 }
 
-/* Component Styles */
-
-/* Game container */
 .game-container {
   width: 100vw;
   height: 100vh;
@@ -79,7 +54,7 @@ html {
   overflow: hidden;
 }
 
-/* Sky Background Container */
+/* Sky */
 .sky-background {
   position: absolute;
   top: 0;
@@ -90,16 +65,15 @@ html {
   z-index: -3;
 }
 
-/* Sky Background Image */
 .sky-background-image {
-  width: 200%; /* Double the container width */
+  width: 200%;
   height: 100%;
   background-image: url('../assets/sky.svg');
   background-size: 50% 100%;
   background-repeat: repeat-x;
 }
 
-/* Ground Background Container */
+/* Ground */
 .ground {
   position: absolute;
   bottom: 0;
@@ -110,47 +84,41 @@ html {
   z-index: -2;
 }
 
-/* Ground Background Image */
 .ground-background-image {
   width: 200%;
   height: 100%;
   background-image: url('../assets/ground.svg');
-  background-size: 50% 100%; /* Adjusted */
+  background-size: 50% 100%;
   background-repeat: repeat-x;
 }
 
-/* Animation Keyframes */
-
-/* Start background animations when parallax is active */
+/* Animate sky and ground when .parallax is active */
 .game-container.parallax .sky-background-image {
   animation: move-sky var(--sky-move-duration) linear infinite;
 }
-
 .game-container.parallax .ground-background-image {
   animation: move-ground var(--ground-move-duration) linear infinite;
 }
 
-/* Sky Animation */
 @keyframes move-sky {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%); /* Move left by half of its width */
+    transform: translateX(-50%);
   }
 }
 
-/* Ground Animation */
 @keyframes move-ground {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%); /* Move left by half of its width */
+    transform: translateX(-50%);
   }
 }
 
-/* Player running animation */
+/* Player animations */
 @keyframes player-run-animation {
   from {
     background-position: 0 0;
@@ -160,7 +128,6 @@ html {
   }
 }
 
-/* Player jumping animation */
 @keyframes player-jump-animation {
   from {
     background-position: 0 0;
@@ -173,7 +140,7 @@ html {
   }
 }
 
-/* Orion running animation */
+/* Orion animation */
 @keyframes orion-run-animation {
   from {
     background-position: 0 0;
@@ -183,32 +150,19 @@ html {
   }
 }
 
-/* Common jump animation */
-@keyframes common-jump-animation {
-  0%,
-  100% {
-    bottom: var(--ground-level);
-  }
-  50% {
-    bottom: calc(var(--ground-level) + var(--jump-height));
-  }
-}
-
-/* Player styles */
+/* Elements */
 .player {
   position: absolute;
   bottom: var(--ground-level);
   left: var(--player-left);
   width: var(--player-width);
   height: var(--player-height);
-  margin: 0;
-  padding: 0;
-  background-image: url('../assets/player_sprite_sheet.png'); /* Set running sprite sheet */
+  background-image: url('../assets/player_sprite_sheet.png');
   background-size: calc(var(--player-width) * var(--player-frames))
     var(--player-height);
   background-repeat: no-repeat;
-  background-position: 0 0; /* Ensure background starts at top-left */
-  z-index: 10; /* Higher z-index to appear in front */
+  background-position: 0 0;
+  z-index: 10;
   animation: player-run-animation var(--player-animation-duration)
     steps(var(--player-frames)) infinite;
   animation-play-state: paused;
@@ -220,16 +174,18 @@ html {
   animation-play-state: running;
 }
 
+/**
+ * IMPORTANT CHANGE:
+ * Removed the 'left: calc(...)' line to avoid shifting horizontally
+ * during jump. Now only the sprite *width* changes, so visually it
+ * might expand slightly, but the player remains at the same X-position.
+ */
 .player.jumping {
-  /* Trigger jump sprite sheet and jump animation */
   animation: player-jump-animation var(--player-jump-animation-duration)
     steps(var(--player-jump-frames)) forwards;
-  background-image: url('../assets/player-jump_sprite_sheet.png'); /* Set jumping sprite sheet */
+  background-image: url('../assets/player-jump_sprite_sheet.png');
   width: var(--player-jump-width);
   height: var(--player-jump-height);
-  left: calc(
-    var(--player-left) - ((var(--player-jump-width) - var(--player-width)) / 2)
-  );
   bottom: calc(
     var(--ground-level) - (var(--player-jump-height) - var(--player-height))
   );
@@ -239,21 +195,18 @@ html {
   animation-fill-mode: forwards;
 }
 
-/* Orion styles */
 .orion {
   position: absolute;
   bottom: var(--ground-level);
   left: var(--orion-left);
   width: var(--orion-width);
   height: var(--orion-height);
-  margin: 0;
-  padding: 0;
   background-image: url('../assets/orion_sprite_sheet.png');
   background-size: calc(var(--orion-width) * var(--orion-frames))
     var(--orion-height);
   background-repeat: no-repeat;
-  background-position: 0 0; /* Ensure background starts at top-left */
-  z-index: 8; /* Ensure obstacle appears between Orion and Player */
+  background-position: 0 0;
+  z-index: 8;
   animation: orion-run-animation var(--orion-animation-duration)
     steps(var(--orion-frames)) infinite;
   animation-play-state: paused;
@@ -265,16 +218,11 @@ html {
   animation-play-state: running;
 }
 
-.orion.jumping {
-  /* Trigger common jump animation */
-  animation: common-jump-animation var(--jump-duration) ease-in-out forwards;
-}
-
-/* Obstacle styles */
+/* The obstacle */
 .obstacle {
   position: absolute;
   bottom: var(--ground-level);
-  left: 0; /* Ensure initial left is set */
+  left: 0;
   width: var(--obstacle-width);
   height: var(--obstacle-height);
   background-size: cover;
@@ -310,31 +258,6 @@ html {
   z-index: 1000;
 }
 
-/* Utility Classes and Helper Styles */
-
-/* Paused state */
-.paused {
-  opacity: 0.7;
-  filter: grayscale(50%);
-  transition:
-    opacity 0.3s ease,
-    filter 0.3s ease;
-}
-
-/* Flexbox utilities */
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Common styles for game elements */
-.game-element {
-  position: absolute;
-  bottom: var(--ground-level);
-}
-
-/* Hidden class */
 .hidden {
   display: none !important;
 }
